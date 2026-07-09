@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/readme_logo.png" alt="CampSpace Logo" width="180"/>
+<img src="images/readme_logo.png" alt="CampSpace Logo" width="450"/>
 
 # CampSpace
 
