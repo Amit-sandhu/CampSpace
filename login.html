@@ -2,17 +2,65 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>CampSpace-Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampSpace Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon3.ico">
 </head>
 
 <body>
-  <video autoplay muted loop playsinline class="background-video">
-    <source src="videos/login_bg_video.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+
+    <video autoplay muted loop playsinline class="background-video">
+        <source src="videos/login_bg_loop.mp4" type="video/mp4">
+    </video>
+
+    <div class="overlay"></div>
+
+    <header class="brand">
+        <img src="images/campspace_text.png" alt="CampSpace">
+    </header>
+
+    <div class="login-card">
+        <div class="glass-highlight"></div>
+
+        <img class="logo" src="images/octopus.png" alt="CampSpace">
+
+        <h1 style="">Welcome back</h1>
+        <p class="subtitle">Sign in to continue to your workspace</p>
+
+        <label>Email</label>
+        <div class="input-box">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" placeholder="you@campspace.edu">
+        </div>
+
+        <label>Password</label>
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" placeholder="••••••••">
+            <i class="fa-regular fa-eye"></i>
+        </div>
+
+        <button class="login-btn">
+            Sign In <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div class="divider">or continue with</div>
+
+        <div class="socials">
+            <button><i class="fa-brands fa-github"></i> GitHub</button>
+            <button><i class="fa-brands fa-google"></i> Google</button>
+            <button><i class="fa-brands fa-microsoft"></i> Microsoft</button>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Forgot password?</a>
+            <a href="#">Create account →</a>
+        </div>
+    </div>
+
 </body>
 
 </html>
