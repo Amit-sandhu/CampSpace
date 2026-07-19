@@ -11,37 +11,6 @@
 </head>
 <body class="mainpage-body">
 
-  <!-- ================= BACKGROUND TUBES ================= -->
-  <svg class="mainpage-tubes" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- top left tube -->
-    <path class="mainpage-tube mainpage-tube--1" d="M -40 260 C 60 260, 90 180, 190 175 C 260 172, 300 220, 340 235" stroke="#0B0B0D" stroke-width="34" stroke-linecap="round" fill="none"/>
-    <circle class="mainpage-tube-tip mainpage-tube-tip--1" cx="352" cy="112" r="15" fill="#FFFFFF" stroke="#0B0B0D" stroke-width="4"/>
-    <circle cx="352" cy="112" r="6" fill="#2563EB"/>
-
-    <!-- left mid tube emerging from edge -->
-    <path class="mainpage-tube mainpage-tube--2" d="M -40 330 C 10 340, 35 400, 20 460 C 5 520, -30 540, -40 560" stroke="#0B0B0D" stroke-width="30" stroke-linecap="round" fill="none"/>
-    <circle class="mainpage-tube-tip mainpage-tube-tip--2" cx="30" cy="308" r="14" fill="#FFFFFF" stroke="#0B0B0D" stroke-width="4"/>
-    <circle cx="30" cy="308" r="6" fill="#2563EB"/>
-
-    <!-- right side long tube -->
-    <path class="mainpage-tube mainpage-tube--3" d="M 1576 220 C 1440 210, 1400 140, 1300 120 C 1220 105, 1180 130, 1160 105" stroke="#0B0B0D" stroke-width="30" stroke-linecap="round" fill="none"/>
-    <circle class="mainpage-tube-tip mainpage-tube-tip--3" cx="1160" cy="105" r="14" fill="#FFFFFF" stroke="#0B0B0D" stroke-width="4"/>
-    <circle cx="1160" cy="105" r="6" fill="#2563EB"/>
-    <circle class="mainpage-tube-tip mainpage-tube-tip--3b" cx="1438" cy="158" r="10" fill="#2563EB"/>
-
-    <!-- right mid tube -->
-    <path class="mainpage-tube mainpage-tube--4" d="M 1576 320 C 1500 330, 1470 300, 1440 340" stroke="#0B0B0D" stroke-width="26" stroke-linecap="round" fill="none"/>
-
-    <!-- bottom tube -->
-    <path class="mainpage-tube mainpage-tube--5" d="M 560 1064 C 620 1000, 700 985, 760 940 C 810 902, 850 900, 900 878" stroke="#0B0B0D" stroke-width="34" stroke-linecap="round" fill="none"/>
-    <circle class="mainpage-tube-tip mainpage-tube-tip--5" cx="900" cy="878" r="15" fill="#FFFFFF" stroke="#0B0B0D" stroke-width="4"/>
-    <circle cx="900" cy="878" r="6" fill="#2563EB"/>
-
-    <!-- small floating dots -->
-    <circle class="mainpage-tube-dot mainpage-tube-dot--1" cx="439" cy="97" r="4.5" fill="#0B0B0D"/>
-    <circle class="mainpage-tube-dot mainpage-tube-dot--2" cx="1488" cy="705" r="4.5" fill="#0B0B0D"/>
-  </svg>
-
   <!-- ================= TOP NAVIGATION ================= -->
   <header class="mainpage-nav">
     <div class="mainpage-nav-left">
@@ -74,6 +43,9 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New
       </button>
+      <button class="mainpage-icon-btn" id="mainpage-theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="mainpage-theme-icon"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>
+      </button>
       <button class="mainpage-icon-btn" id="mainpage-notif-btn" type="button" aria-label="Notifications">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="mainpage-notif-dot"></span>
@@ -86,296 +58,113 @@
   <main class="mainpage-canvas-viewport">
     <div class="mainpage-canvas" id="mainpage-canvas">
 
-      <!-- DASHBOARD WINDOW -->
-      <section class="mainpage-window mainpage-window--dashboard" data-mainpage-window style="--mainpage-x:80px; --mainpage-y:96px; --mainpage-w:404px;">
+      <!-- DASHBOARD WINDOW (empty) -->
+      <section class="mainpage-window mainpage-window--dashboard" data-mainpage-window data-app="dashboard" style="--mainpage-x:120px; --mainpage-y:100px; --mainpage-w:460px;">
         <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
+          <div class="mainpage-traffic-lights">
+            <button class="mainpage-tl mainpage-tl--red" data-mainpage-action="close" aria-label="Close"></button>
+            <button class="mainpage-tl mainpage-tl--yellow" data-mainpage-action="minimize" aria-label="Minimize"></button>
+            <button class="mainpage-tl mainpage-tl--green" data-mainpage-action="maximize" aria-label="Maximize"></button>
+          </div>
           <h2 class="mainpage-window-title">Dashboard</h2>
-          <button class="mainpage-window-action">This Week
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
         </header>
-        <div class="mainpage-window-body mainpage-dashboard-body">
-          <div class="mainpage-greeting">
-            <h3>Hey, Arjun <span class="mainpage-wave">👋</span></h3>
-            <p>Let's make today productive.</p>
-          </div>
-          <div class="mainpage-stat-row">
-            <div class="mainpage-stat">
-              <span class="mainpage-stat-label">Classes</span>
-              <span class="mainpage-stat-value">12</span>
-              <span class="mainpage-stat-delta mainpage-stat-delta--up">↑ 2 this week</span>
-            </div>
-            <div class="mainpage-stat">
-              <span class="mainpage-stat-label">Tasks</span>
-              <span class="mainpage-stat-value">18</span>
-              <span class="mainpage-stat-delta mainpage-stat-delta--up">↑ 4 due soon</span>
-            </div>
-            <div class="mainpage-stat">
-              <span class="mainpage-stat-label">Study Time</span>
-              <span class="mainpage-stat-value">24<small>h</small></span>
-              <span class="mainpage-stat-delta mainpage-stat-delta--up">↑ 6h this week</span>
-            </div>
-          </div>
-          <div class="mainpage-upcoming">
-            <h4>Upcoming</h4>
-            <ul class="mainpage-upcoming-list">
-              <li class="mainpage-upcoming-item">
-                <span class="mainpage-upcoming-dot mainpage-upcoming-dot--orange"></span>
-                <div class="mainpage-upcoming-text"><strong>Data Structures</strong><span>Today, 10:00 AM</span></div>
-                <span class="mainpage-upcoming-tag">In 30m</span>
-              </li>
-              <li class="mainpage-upcoming-item">
-                <span class="mainpage-upcoming-dot mainpage-upcoming-dot--blue"></span>
-                <div class="mainpage-upcoming-text"><strong>Computer Networks Lab</strong><span>Today, 1:00 PM</span></div>
-                <span class="mainpage-upcoming-tag">3h</span>
-              </li>
-              <li class="mainpage-upcoming-item">
-                <span class="mainpage-upcoming-dot mainpage-upcoming-dot--purple"></span>
-                <div class="mainpage-upcoming-text"><strong>Design Systems</strong><span>Tomorrow, 9:00 AM</span></div>
-                <span class="mainpage-upcoming-tag">1d</span>
-              </li>
-            </ul>
+        <div class="mainpage-window-body mainpage-empty-body">
+          <div class="mainpage-empty-state">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <p>Nothing here yet</p>
+            <span>Open Calendar, Notepad, or Calculator from the dock below</span>
           </div>
         </div>
       </section>
 
       <!-- CALENDAR WINDOW -->
-      <section class="mainpage-window mainpage-window--calendar" data-mainpage-window style="--mainpage-x:532px; --mainpage-y:92px; --mainpage-w:444px;">
+      <section class="mainpage-window mainpage-window--calendar mainpage-window--hidden" data-mainpage-window data-app="calendar" style="--mainpage-x:600px; --mainpage-y:90px; --mainpage-w:360px;">
         <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
+          <div class="mainpage-traffic-lights">
+            <button class="mainpage-tl mainpage-tl--red" data-mainpage-action="close" aria-label="Close"></button>
+            <button class="mainpage-tl mainpage-tl--yellow" data-mainpage-action="minimize" aria-label="Minimize"></button>
+            <button class="mainpage-tl mainpage-tl--green" data-mainpage-action="maximize" aria-label="Maximize"></button>
+          </div>
           <h2 class="mainpage-window-title">Calendar</h2>
-          <button class="mainpage-window-action mainpage-window-action--icon">⋯</button>
         </header>
         <div class="mainpage-window-body mainpage-calendar-body">
           <div class="mainpage-calendar-toolbar">
-            <span class="mainpage-calendar-month">May 2026 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
-            <div class="mainpage-calendar-controls">
-              <button class="mainpage-window-action">Week
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <button class="mainpage-add-btn" aria-label="Add event">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              </button>
-            </div>
+            <button class="mainpage-cal-nav" id="mainpage-cal-prev" aria-label="Previous month">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="mainpage-calendar-month" id="mainpage-cal-label">Month Year</span>
+            <button class="mainpage-cal-nav" id="mainpage-cal-next" aria-label="Next month">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="mainpage-window-action" id="mainpage-cal-today">Today</button>
           </div>
-          <div class="mainpage-week-strip">
-            <div class="mainpage-day"><span>MON</span><b>19</b></div>
-            <div class="mainpage-day mainpage-day--active"><span>TUE</span><b>20</b></div>
-            <div class="mainpage-day"><span>WED</span><b>21</b></div>
-            <div class="mainpage-day"><span>THU</span><b>22</b></div>
-            <div class="mainpage-day"><span>FRI</span><b>23</b></div>
-            <div class="mainpage-day"><span>SAT</span><b>24</b></div>
-            <div class="mainpage-day"><span>SUN</span><b>25</b></div>
+          <div class="mainpage-month-weekdays">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
           </div>
-          <div class="mainpage-calendar-grid">
-            <div class="mainpage-hour-col">
-              <span>9 AM</span><span>10 AM</span><span>11 AM</span><span>12 PM</span><span>1 PM</span><span>2 PM</span>
-            </div>
-            <div class="mainpage-events-col">
-              <div class="mainpage-event mainpage-event--purple" style="top:56px; height:52px;"><strong>Design Systems</strong><span>9:00 – 10:30</span></div>
-              <div class="mainpage-event mainpage-event--blue" style="top:18px; height:52px;"><strong>Data Structures</strong><span>10:00 – 11:00</span></div>
-              <div class="mainpage-event mainpage-event--green" style="top:150px; height:52px;"><strong>Operating Systems</strong><span>11:30 – 1:00</span></div>
-              <div class="mainpage-event mainpage-event--orange" style="top:214px; height:52px;"><strong>CN Lab</strong><span>1:00 – 3:00</span></div>
-            </div>
+          <div class="mainpage-month-grid" id="mainpage-cal-grid"></div>
+          <div class="mainpage-cal-selected" id="mainpage-cal-selected">Pick a date</div>
+        </div>
+      </section>
+
+      <!-- NOTEPAD WINDOW -->
+      <section class="mainpage-window mainpage-window--notepad mainpage-window--hidden" data-mainpage-window data-app="notepad" style="--mainpage-x:1010px; --mainpage-y:100px; --mainpage-w:380px;">
+        <header class="mainpage-window-bar" data-mainpage-drag-handle>
+          <div class="mainpage-traffic-lights">
+            <button class="mainpage-tl mainpage-tl--red" data-mainpage-action="close" aria-label="Close"></button>
+            <button class="mainpage-tl mainpage-tl--yellow" data-mainpage-action="minimize" aria-label="Minimize"></button>
+            <button class="mainpage-tl mainpage-tl--green" data-mainpage-action="maximize" aria-label="Maximize"></button>
+          </div>
+          <h2 class="mainpage-window-title">Notepad</h2>
+          <button class="mainpage-window-action mainpage-window-action--icon" id="mainpage-notepad-clear">Clear</button>
+        </header>
+        <div class="mainpage-window-body mainpage-notepad-body">
+          <textarea class="mainpage-notepad-textarea" id="mainpage-notepad-textarea" placeholder="Start typing..." spellcheck="false"></textarea>
+          <div class="mainpage-notepad-footer">
+            <span id="mainpage-notepad-count">0 words · 0 characters</span>
+            <span id="mainpage-notepad-status">Saved for this session</span>
           </div>
         </div>
       </section>
 
-      <!-- NOTES WINDOW -->
-      <section class="mainpage-window mainpage-window--notes" data-mainpage-window style="--mainpage-x:1040px; --mainpage-y:152px; --mainpage-w:380px;">
+      <!-- CALCULATOR WINDOW -->
+      <section class="mainpage-window mainpage-window--calculator mainpage-window--hidden" data-mainpage-window data-app="calculator" style="--mainpage-x:600px; --mainpage-y:430px; --mainpage-w:280px;">
         <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
-          <h2 class="mainpage-window-title">Notes</h2>
-          <div class="mainpage-notes-search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search notes...</span></div>
-          <button class="mainpage-add-btn" aria-label="New note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-        </header>
-        <div class="mainpage-window-body mainpage-notes-body">
-          <aside class="mainpage-notes-sidebar">
-            <span class="mainpage-notes-section-label">Pinned</span>
-            <button class="mainpage-note-item mainpage-note-item--active">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16l8-4 8 4V4a2 2 0 0 0-2-2z"/></svg>
-              <span><strong>Operating Systems</strong><small>Kernel &amp; Processes</small></span>
-            </button>
-            <button class="mainpage-note-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16l8-4 8 4V4a2 2 0 0 0-2-2z"/></svg>
-              <span><strong>Data Structures</strong><small>Trees &amp; Graphs</small></span>
-            </button>
-            <span class="mainpage-notes-section-label">All Notes</span>
-            <button class="mainpage-note-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <span><strong>Design Patterns</strong><small>Creational Patterns</small></span>
-            </button>
-            <button class="mainpage-note-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <span><strong>DBMS</strong><small>Normalization</small></span>
-            </button>
-            <button class="mainpage-note-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <span><strong>Computer Networks</strong><small>HTTP &amp; TCP/IP</small></span>
-            </button>
-          </aside>
-          <div class="mainpage-notes-editor">
-            <h3>Operating Systems <span class="mainpage-note-chip">OS</span></h3>
-            <h4>Kernel</h4>
-            <p>The kernel is the core component that manages system resources.</p>
-            <h4>Key Functions</h4>
-            <ul>
-              <li>Process Management</li>
-              <li>Memory Management</li>
-              <li>Device Management</li>
-              <li>System Calls</li>
-            </ul>
-            <div class="mainpage-editor-footer">
-              <span>Edited 2h ago</span>
-              <div class="mainpage-editor-tools">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-              </div>
-            </div>
+          <div class="mainpage-traffic-lights">
+            <button class="mainpage-tl mainpage-tl--red" data-mainpage-action="close" aria-label="Close"></button>
+            <button class="mainpage-tl mainpage-tl--yellow" data-mainpage-action="minimize" aria-label="Minimize"></button>
+            <button class="mainpage-tl mainpage-tl--green" data-mainpage-action="maximize" aria-label="Maximize"></button>
           </div>
-        </div>
-      </section>
+          <h2 class="mainpage-window-title">Calculator</h2>
+        </header>
+        <div class="mainpage-window-body mainpage-calculator-body">
+          <div class="mainpage-calc-display">
+            <div class="mainpage-calc-expression" id="mainpage-calc-expr">&nbsp;</div>
+            <div class="mainpage-calc-result" id="mainpage-calc-result">0</div>
+          </div>
+          <div class="mainpage-calc-grid">
+            <button class="mainpage-calc-btn mainpage-calc-btn--fn" data-calc-action="clear">C</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--fn" data-calc-action="backspace">⌫</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--fn" data-calc-action="percent">%</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--op" data-calc-op="÷">÷</button>
 
-      <!-- TASKS WINDOW -->
-      <section class="mainpage-window mainpage-window--tasks" data-mainpage-window style="--mainpage-x:56px; --mainpage-y:520px; --mainpage-w:352px;">
-        <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
-          <h2 class="mainpage-window-title">Tasks</h2>
-          <div class="mainpage-tab-group">
-            <button class="mainpage-tab mainpage-tab--active">All</button>
-            <button class="mainpage-tab">My Tasks</button>
-            <button class="mainpage-tab">Kanban</button>
-          </div>
-          <button class="mainpage-window-action mainpage-window-action--icon">⋯</button>
-        </header>
-        <div class="mainpage-window-body mainpage-tasks-body">
-          <div class="mainpage-task-group">
-            <span class="mainpage-priority-label mainpage-priority-label--high">High Priority</span>
-            <label class="mainpage-task-item"><input type="checkbox"><span class="mainpage-task-check"></span><span class="mainpage-task-name">OS Assignment</span><span class="mainpage-task-due">Due in 2h</span><span class="mainpage-task-avatar">👤</span></label>
-            <label class="mainpage-task-item"><input type="checkbox"><span class="mainpage-task-check"></span><span class="mainpage-task-name">Complete Lab Report</span><span class="mainpage-task-due">Due tomorrow</span><span class="mainpage-task-avatar">👤</span></label>
-          </div>
-          <div class="mainpage-task-group">
-            <span class="mainpage-priority-label mainpage-priority-label--medium">Medium Priority</span>
-            <label class="mainpage-task-item"><input type="checkbox"><span class="mainpage-task-check"></span><span class="mainpage-task-name">Read Chapter 6</span><span class="mainpage-task-due">Due in 2d</span><span class="mainpage-task-avatar">👤</span></label>
-            <label class="mainpage-task-item"><input type="checkbox"><span class="mainpage-task-check"></span><span class="mainpage-task-name">Practice Problems</span><span class="mainpage-task-due">Due in 3d</span><span class="mainpage-task-avatar">👤</span></label>
-          </div>
-          <div class="mainpage-task-group">
-            <span class="mainpage-priority-label mainpage-priority-label--low">Low Priority</span>
-            <label class="mainpage-task-item"><input type="checkbox"><span class="mainpage-task-check"></span><span class="mainpage-task-name">Watch System Design</span><span class="mainpage-task-due">Due in 5d</span><span class="mainpage-task-avatar">👤</span></label>
-          </div>
-          <button class="mainpage-add-task-btn" id="mainpage-add-task">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Task
-          </button>
-        </div>
-      </section>
+            <button class="mainpage-calc-btn" data-calc-num="7">7</button>
+            <button class="mainpage-calc-btn" data-calc-num="8">8</button>
+            <button class="mainpage-calc-btn" data-calc-num="9">9</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--op" data-calc-op="×">×</button>
 
-      <!-- SUBJECTS WINDOW -->
-      <section class="mainpage-window mainpage-window--subjects" data-mainpage-window style="--mainpage-x:450px; --mainpage-y:564px; --mainpage-w:206px;">
-        <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
-          <h2 class="mainpage-window-title">Subjects</h2>
-          <button class="mainpage-add-btn" aria-label="Add subject"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-        </header>
-        <div class="mainpage-window-body mainpage-subjects-body">
-          <button class="mainpage-subject-card">
-            <span class="mainpage-subject-strip mainpage-subject-strip--blue"></span>
-            <span class="mainpage-subject-info"><strong>Data Structures</strong><small>Prof. Sharma</small></span>
-            <span class="mainpage-subject-pct">85%</span>
-          </button>
-          <button class="mainpage-subject-card">
-            <span class="mainpage-subject-strip mainpage-subject-strip--green"></span>
-            <span class="mainpage-subject-info"><strong>Operating Systems</strong><small>Prof. Verma</small></span>
-            <span class="mainpage-subject-pct">78%</span>
-          </button>
-          <button class="mainpage-subject-card">
-            <span class="mainpage-subject-strip mainpage-subject-strip--orange"></span>
-            <span class="mainpage-subject-info"><strong>Computer Networks</strong><small>Prof. Gupta</small></span>
-            <span class="mainpage-subject-pct">72%</span>
-          </button>
-          <button class="mainpage-subject-card">
-            <span class="mainpage-subject-strip mainpage-subject-strip--purple"></span>
-            <span class="mainpage-subject-info"><strong>Design Systems</strong><small>Prof. Iyer</small></span>
-            <span class="mainpage-subject-pct">88%</span>
-          </button>
-          <a class="mainpage-view-all" href="#">View all subjects →</a>
-        </div>
-      </section>
+            <button class="mainpage-calc-btn" data-calc-num="4">4</button>
+            <button class="mainpage-calc-btn" data-calc-num="5">5</button>
+            <button class="mainpage-calc-btn" data-calc-num="6">6</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--op" data-calc-op="−">−</button>
 
-      <!-- ATTENDANCE WINDOW -->
-      <section class="mainpage-window mainpage-window--attendance" data-mainpage-window style="--mainpage-x:696px; --mainpage-y:600px; --mainpage-w:200px;">
-        <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
-          <h2 class="mainpage-window-title">Attendance</h2>
-          <button class="mainpage-add-btn" aria-label="Add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-        </header>
-        <div class="mainpage-window-body mainpage-attendance-body">
-          <div class="mainpage-donut-wrap">
-            <svg class="mainpage-donut" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(0,0,0,.06)" stroke-width="12"/>
-              <circle class="mainpage-donut-arc" cx="60" cy="60" r="50" fill="none" stroke="#22C55E" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="25" transform="rotate(-90 60 60)"/>
-            </svg>
-            <div class="mainpage-donut-center"><strong>92%</strong><span>Overall</span></div>
-          </div>
-          <ul class="mainpage-attendance-legend">
-            <li><span class="mainpage-legend-dot mainpage-legend-dot--green"></span>Present<b>44</b></li>
-            <li><span class="mainpage-legend-dot mainpage-legend-dot--red"></span>Absent<b>4</b></li>
-            <li><span class="mainpage-legend-dot mainpage-legend-dot--gray"></span>Total<b>48</b></li>
-          </ul>
-          <button class="mainpage-details-btn">View Details →</button>
-        </div>
-      </section>
+            <button class="mainpage-calc-btn" data-calc-num="1">1</button>
+            <button class="mainpage-calc-btn" data-calc-num="2">2</button>
+            <button class="mainpage-calc-btn" data-calc-num="3">3</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--op" data-calc-op="+">+</button>
 
-      <!-- CODING HUB WINDOW -->
-      <section class="mainpage-window mainpage-window--coding" data-mainpage-window style="--mainpage-x:928px; --mainpage-y:526px; --mainpage-w:516px;">
-        <header class="mainpage-window-bar" data-mainpage-drag-handle>
-          <div class="mainpage-traffic-lights"><span class="mainpage-tl mainpage-tl--red"></span><span class="mainpage-tl mainpage-tl--yellow"></span><span class="mainpage-tl mainpage-tl--green"></span></div>
-          <h2 class="mainpage-window-title">Coding Hub</h2>
-          <button class="mainpage-window-action">VS Code
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <button class="mainpage-icon-btn mainpage-icon-btn--sm" aria-label="Fullscreen"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
-          <button class="mainpage-icon-btn mainpage-icon-btn--sm" aria-label="More">⋯</button>
-          <button class="mainpage-icon-btn mainpage-icon-btn--sm" aria-label="Close">✕</button>
-        </header>
-        <div class="mainpage-window-body mainpage-coding-body">
-          <aside class="mainpage-repo-sidebar">
-            <span class="mainpage-notes-section-label">Repositories</span>
-            <button class="mainpage-repo-item mainpage-repo-item--active">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16l8-4 8 4V4a2 2 0 0 0-2-2z"/></svg>
-              <span><strong>DSA Solutions</strong><small>Updated 2h ago</small></span>
-            </button>
-            <button class="mainpage-repo-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-              <span><strong>Web Project</strong><small>Updated 1d ago</small></span>
-            </button>
-            <button class="mainpage-repo-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-              <span><strong>System Design</strong><small>Updated 3d ago</small></span>
-            </button>
-            <button class="mainpage-repo-add">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              New Repository
-            </button>
-          </aside>
-          <div class="mainpage-code-panel">
-            <div class="mainpage-code-panel-title">DSA Solutions <span>Python</span></div>
-            <pre class="mainpage-code-editor"><code><span class="mainpage-ln">1</span><span class="mainpage-kw">def</span> <span class="mainpage-fn">two_sum</span>(nums, target):
-<span class="mainpage-ln">2</span>    lookup = {}
-<span class="mainpage-ln">3</span>    <span class="mainpage-kw">for</span> i, num <span class="mainpage-kw">in</span> enumerate(nums):
-<span class="mainpage-ln">4</span>        <span class="mainpage-kw">if</span> target - num <span class="mainpage-kw">in</span> lookup:
-<span class="mainpage-ln">5</span>            <span class="mainpage-kw">return</span> [lookup[target - num], i]
-<span class="mainpage-ln">6</span>        lookup[num] = i
-<span class="mainpage-ln">7</span>    <span class="mainpage-kw">return</span> []</code></pre>
-            <div class="mainpage-commit-bar">
-              <span class="mainpage-commit-avatar">A</span>
-              <span class="mainpage-commit-text">Arjun committed <em>2h ago</em></span>
-              <button class="mainpage-push-btn" id="mainpage-push-changes">Push Changes</button>
-              <span class="mainpage-branch">⑂ main <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
-            </div>
+            <button class="mainpage-calc-btn mainpage-calc-btn--wide" data-calc-num="0">0</button>
+            <button class="mainpage-calc-btn" data-calc-action="decimal">.</button>
+            <button class="mainpage-calc-btn mainpage-calc-btn--equals" data-calc-action="equals">=</button>
           </div>
         </div>
       </section>
@@ -385,46 +174,37 @@
 
   <!-- ================= DOCK ================= -->
   <nav class="mainpage-dock" aria-label="Application dock">
-    <button class="mainpage-dock-item mainpage-dock-item--active" data-mainpage-tip="Workspace">
+    <button class="mainpage-dock-item mainpage-dock-item--active" data-mainpage-dock-app="dashboard" data-mainpage-tip="Dashboard">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
     </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Calendar">
+    <button class="mainpage-dock-item" data-mainpage-dock-app="calendar" data-mainpage-tip="Calendar">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Files">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <button class="mainpage-dock-item" data-mainpage-dock-app="notepad" data-mainpage-tip="Notepad">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
     </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Tasks">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-    </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Coding">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-    </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Subjects">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-    </button>
-    <button class="mainpage-dock-item" data-mainpage-tip="Analytics">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <button class="mainpage-dock-item" data-mainpage-dock-app="calculator" data-mainpage-tip="Calculator">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11.01"/><line x1="12" y1="11" x2="12" y2="11.01"/><line x1="16" y1="11" x2="16" y2="11.01"/><line x1="8" y1="15" x2="8" y2="15.01"/><line x1="12" y1="15" x2="12" y2="15.01"/><line x1="16" y1="15" x2="16" y2="15.01"/><line x1="8" y1="19" x2="8" y2="19.01"/><line x1="12" y1="19" x2="12" y2="19.01"/><line x1="16" y1="19" x2="16" y2="19.01"/></svg>
     </button>
   </nav>
+
 
   <!-- ================= SEARCH PALETTE (⌘K) ================= -->
   <div class="mainpage-palette-overlay" id="mainpage-palette-overlay">
     <div class="mainpage-palette" role="dialog" aria-modal="true" aria-label="Search CampSpace">
       <div class="mainpage-palette-input-row">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="mainpage-palette-input" placeholder="Search pages, subjects, files, notes, commands..." autocomplete="off">
+        <input type="text" id="mainpage-palette-input" placeholder="Search apps or commands..." autocomplete="off">
         <span class="mainpage-palette-esc">ESC</span>
       </div>
       <div class="mainpage-palette-results" id="mainpage-palette-results">
-        <span class="mainpage-palette-group-label">Pages</span>
-        <button class="mainpage-palette-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
-        <button class="mainpage-palette-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</button>
-        <span class="mainpage-palette-group-label">Subjects</span>
-        <button class="mainpage-palette-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/></svg>Data Structures</button>
-        <button class="mainpage-palette-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/></svg>Operating Systems</button>
+        <span class="mainpage-palette-group-label">Apps</span>
+        <button class="mainpage-palette-row" data-mainpage-palette-app="dashboard"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
+        <button class="mainpage-palette-row" data-mainpage-palette-app="calendar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</button>
+        <button class="mainpage-palette-row" data-mainpage-palette-app="notepad"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Notepad</button>
+        <button class="mainpage-palette-row" data-mainpage-palette-app="calculator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>Calculator</button>
         <span class="mainpage-palette-group-label">Commands</span>
-        <button class="mainpage-palette-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4L12 2z"/></svg>Auto-arrange windows</button>
+        <button class="mainpage-palette-row" data-mainpage-palette-command="auto-arrange"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4L12 2z"/></svg>Auto-arrange windows</button>
       </div>
     </div>
   </div>

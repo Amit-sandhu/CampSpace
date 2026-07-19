@@ -39,45 +39,6 @@ html,body{margin:0;padding:0;}
   -webkit-font-smoothing:antialiased;
 }
 
-/* -------------------- Background tubes -------------------- */
-.mainpage-tubes{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  pointer-events:none;
-  opacity:.9;
-}
-.mainpage-tube{ opacity:.92; }
-.mainpage-tube--1{ animation:mainpage-float-a 22s ease-in-out infinite; }
-.mainpage-tube--2{ animation:mainpage-float-b 26s ease-in-out infinite; }
-.mainpage-tube--3{ animation:mainpage-float-a 24s ease-in-out infinite reverse; }
-.mainpage-tube--4{ animation:mainpage-float-b 20s ease-in-out infinite; }
-.mainpage-tube--5{ animation:mainpage-float-a 28s ease-in-out infinite; }
-.mainpage-tube-tip{ animation:mainpage-float-a 22s ease-in-out infinite; }
-.mainpage-tube-tip--2{ animation:mainpage-float-b 26s ease-in-out infinite; }
-.mainpage-tube-tip--5{ animation:mainpage-float-a 28s ease-in-out infinite; }
-.mainpage-tube-dot--1{ animation:mainpage-drift 9s ease-in-out infinite; }
-.mainpage-tube-dot--2{ animation:mainpage-drift 11s ease-in-out infinite reverse; }
-
-@keyframes mainpage-float-a{
-  0%,100%{ transform:translate(0,0) rotate(0deg); }
-  50%{ transform:translate(6px,-10px) rotate(.6deg); }
-}
-@keyframes mainpage-float-b{
-  0%,100%{ transform:translate(0,0) rotate(0deg); }
-  50%{ transform:translate(-8px,8px) rotate(-.6deg); }
-}
-@keyframes mainpage-drift{
-  0%,100%{ transform:translateY(0); }
-  50%{ transform:translateY(-8px); }
-}
-
-@media (prefers-reduced-motion:reduce){
-  .mainpage-tube, .mainpage-tube-tip, .mainpage-tube-dot--1, .mainpage-tube-dot--2{ animation:none; }
-}
-
 /* -------------------- Top navigation -------------------- */
 .mainpage-nav{
   position:sticky;
@@ -560,4 +521,180 @@ html,body{margin:0;padding:0;}
   .mainpage-logo-text{ font-size:15px; }
   .mainpage-dock{ gap:4px; padding:8px; }
   .mainpage-dock-item{ width:40px; height:40px; }
+}
+/* ================================================================
+   Window manager additions (open/close/minimize/maximize, apps)
+   ================================================================ */
+
+.mainpage-window{ display:flex; flex-direction:column; }
+.mainpage-window--hidden{ display:none !important; }
+
+.mainpage-tl{ padding:0; border:none; }
+.mainpage-tl--red{ cursor:pointer; }
+.mainpage-tl--yellow{ cursor:pointer; }
+.mainpage-tl--green{ cursor:pointer; }
+.mainpage-tl:focus-visible{ outline:2px solid var(--mainpage-primary); outline-offset:2px; }
+
+.mainpage-window.mainpage-window--maximized{
+  position:fixed !important;
+  left:16px !important;
+  top:78px !important;
+  width:min(1040px, calc(100vw - 32px)) !important;
+  height:calc(100vh - 156px) !important;
+  z-index:900 !important;
+}
+.mainpage-window--maximized .mainpage-window-body{ flex:1 1 auto; min-height:0; height:auto !important; }
+.mainpage-window--maximized .mainpage-notepad-textarea{ flex:1 1 auto; height:auto; }
+.mainpage-window--maximized .mainpage-calc-grid{ max-width:340px; margin:0 auto; }
+.mainpage-window--maximized .mainpage-calculator-body{ justify-content:center; }
+
+/* -------------------- Empty dashboard -------------------- */
+.mainpage-empty-body{ min-height:260px; display:flex; align-items:center; justify-content:center; }
+.mainpage-empty-state{
+  display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center;
+  color:var(--mainpage-text-secondary); padding:20px 10px;
+}
+.mainpage-empty-state svg{ color:var(--mainpage-border-strong); margin-bottom:4px; }
+.mainpage-empty-state p{ margin:0; font-size:14px; font-weight:700; color:var(--mainpage-text); }
+.mainpage-empty-state span{ font-size:12.5px; max-width:220px; line-height:1.5; }
+
+/* -------------------- Calendar (month grid) -------------------- */
+.mainpage-cal-nav{
+  width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.035); border:1px solid var(--mainpage-border); color:var(--mainpage-text); cursor:pointer;
+}
+.mainpage-cal-nav:hover{ background:#fff; box-shadow:var(--mainpage-shadow-soft); }
+.mainpage-calendar-toolbar{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.mainpage-calendar-toolbar .mainpage-calendar-month{ flex:1; justify-content:center; font-size:14px; }
+.mainpage-calendar-toolbar .mainpage-window-action{ margin-left:auto; }
+
+.mainpage-month-weekdays{
+  display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px;
+}
+.mainpage-month-weekdays span{
+  text-align:center; font-size:10.5px; font-weight:700; color:var(--mainpage-text-secondary);
+}
+.mainpage-month-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.mainpage-month-cell{
+  aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+  font-size:12.5px; font-weight:600; border-radius:9px; border:none; background:transparent;
+  color:var(--mainpage-text); cursor:pointer; font-family:inherit; position:relative;
+}
+.mainpage-month-cell:hover{ background:rgba(0,0,0,.045); }
+.mainpage-month-cell--muted{ color:var(--mainpage-text-secondary); opacity:.4; }
+.mainpage-month-cell--today{ color:var(--mainpage-primary); font-weight:800; }
+.mainpage-month-cell--today::after{
+  content:''; position:absolute; bottom:4px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--mainpage-primary);
+}
+.mainpage-month-cell--selected{ background:var(--mainpage-primary); color:#fff; }
+.mainpage-month-cell--selected::after{ background:#fff; }
+.mainpage-cal-selected{
+  margin-top:14px; padding-top:12px; border-top:1px solid var(--mainpage-border);
+  font-size:12.5px; font-weight:600; color:var(--mainpage-text-secondary);
+}
+
+/* -------------------- Notepad -------------------- */
+.mainpage-notepad-body{ display:flex; flex-direction:column; gap:10px; padding:14px 16px 16px; }
+.mainpage-notepad-textarea{
+  width:100%; height:260px; resize:vertical; border:1px solid var(--mainpage-border);
+  border-radius:var(--mainpage-radius-md); padding:12px 14px; font-family:inherit; font-size:13.5px;
+  line-height:1.6; color:var(--mainpage-text); background:rgba(255,255,255,.6); outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.mainpage-notepad-textarea:focus{ border-color:var(--mainpage-primary); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+.mainpage-notepad-footer{ display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--mainpage-text-secondary); font-weight:600; }
+
+/* -------------------- Calculator -------------------- */
+.mainpage-calculator-body{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:12px; }
+.mainpage-calc-display{
+  background:rgba(0,0,0,.035); border:1px solid var(--mainpage-border); border-radius:var(--mainpage-radius-md);
+  padding:14px 16px; display:flex; flex-direction:column; align-items:flex-end; gap:4px; min-height:64px; justify-content:flex-end;
+}
+.mainpage-calc-expression{ font-size:12px; color:var(--mainpage-text-secondary); font-weight:600; min-height:14px; }
+.mainpage-calc-result{
+  font-size:30px; font-weight:800; font-family:'Manrope',sans-serif; letter-spacing:-.02em;
+  color:var(--mainpage-text); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.mainpage-calc-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.mainpage-calc-btn{
+  font-family:inherit; font-size:16px; font-weight:700; color:var(--mainpage-text);
+  background:rgba(0,0,0,.035); border:1px solid var(--mainpage-border); border-radius:12px;
+  padding:14px 0; cursor:pointer; transition:background .12s ease, transform .1s ease;
+}
+.mainpage-calc-btn:hover{ background:#fff; box-shadow:var(--mainpage-shadow-soft); }
+.mainpage-calc-btn:active{ transform:scale(.94); }
+.mainpage-calc-btn--fn{ color:var(--mainpage-primary); background:rgba(37,99,235,.08); }
+.mainpage-calc-btn--op{ color:var(--mainpage-primary); font-size:18px; }
+.mainpage-calc-btn--equals{ background:var(--mainpage-primary); color:#fff; }
+.mainpage-calc-btn--equals:hover{ background:var(--mainpage-primary-dim); }
+.mainpage-calc-btn--wide{ grid-column:span 2; }
+
+/* -------------------- Dock active/running indicator -------------------- */
+.mainpage-dock-item--running::after{
+  content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--mainpage-primary);
+}
+
+/* ================================================================
+   Dark mode
+   ================================================================ */
+.mainpage-body--dark{
+  --mainpage-bg:#0B0B0D;
+  --mainpage-text:#F5F5F7;
+  --mainpage-text-secondary:#9CA3AF;
+  --mainpage-border:rgba(255,255,255,.09);
+  --mainpage-border-strong:rgba(255,255,255,.16);
+  --mainpage-card:rgba(28,28,32,.72);
+  --mainpage-card-solid:#1C1C1F;
+  --mainpage-shadow-window:0 4px 10px rgba(0,0,0,.35), 0 24px 48px -12px rgba(0,0,0,.6);
+  --mainpage-shadow-window-hover:0 8px 18px rgba(0,0,0,.4), 0 32px 64px -12px rgba(0,0,0,.65);
+  --mainpage-shadow-soft:0 2px 8px rgba(0,0,0,.35);
+  transition:background-color .25s ease, color .25s ease;
+}
+
+.mainpage-body--dark .mainpage-nav{ background:rgba(11,11,13,.72); }
+
+.mainpage-body--dark .mainpage-stat{ background:rgba(255,255,255,.045); }
+.mainpage-body--dark .mainpage-upcoming-tag{ background:rgba(255,255,255,.07); }
+.mainpage-body--dark .mainpage-kbd-hint,
+.mainpage-body--dark .mainpage-search-kbd,
+.mainpage-body--dark .mainpage-palette-esc{ background:rgba(255,255,255,.08); }
+
+.mainpage-body--dark .mainpage-window-action{ background:rgba(255,255,255,.06); }
+.mainpage-body--dark .mainpage-cal-nav{ background:rgba(255,255,255,.06); }
+.mainpage-body--dark .mainpage-cal-nav:hover{ background:rgba(255,255,255,.12); box-shadow:none; }
+.mainpage-body--dark .mainpage-month-cell:hover{ background:rgba(255,255,255,.08); }
+
+.mainpage-body--dark .mainpage-notepad-textarea{ background:rgba(255,255,255,.04); }
+
+.mainpage-body--dark .mainpage-calc-display{ background:rgba(255,255,255,.045); }
+.mainpage-body--dark .mainpage-calc-btn{ background:rgba(255,255,255,.06); color:var(--mainpage-text); }
+.mainpage-body--dark .mainpage-calc-btn:hover{ background:rgba(255,255,255,.11); box-shadow:none; }
+.mainpage-body--dark .mainpage-calc-btn--fn{ background:rgba(37,99,235,.18); }
+.mainpage-body--dark .mainpage-calc-btn--equals{ background:var(--mainpage-primary); }
+
+.mainpage-body--dark .mainpage-dock-item{ background:rgba(255,255,255,.06); }
+.mainpage-body--dark .mainpage-dock-item:hover{ background:#26262A; }
+.mainpage-body--dark .mainpage-dock-item--active{ background:rgba(37,99,235,.22); }
+
+.mainpage-body--dark .mainpage-palette{ background:rgba(24,24,27,.92); }
+.mainpage-body--dark .mainpage-palette-row:hover{ background:rgba(37,99,235,.18); }
+
+.mainpage-body--dark .mainpage-empty-state svg{ color:rgba(255,255,255,.18); }
+
+#mainpage-theme-icon{ transition:transform .3s ease; }
+.mainpage-body--dark #mainpage-theme-icon{ transform:rotate(180deg); }
+
+/* ================================================================
+   Workspace (main hub) background image
+   ================================================================ */
+.mainpage-canvas-viewport{
+  background-image:linear-gradient(180deg, rgba(11,11,13,.1), rgba(11,11,13,.35)), url('images/dashboard_bg.png');
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+.mainpage-body--dark .mainpage-canvas-viewport{
+  background-image:linear-gradient(180deg, rgba(11,11,13,.35), rgba(11,11,13,.65)), url('images/dashboard_bg.png');
 }
