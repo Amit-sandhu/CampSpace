@@ -1,0 +1,241 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Inter, Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 10%;
+    background: #dfe7f6;
+}
+.background-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+    filter: brightness(1.08) contrast(.95) saturate(.92);
+    z-index: -3;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(rgba(255, 255, 255, .06), rgba(255, 255, 255, .02));
+    z-index: -2;
+}
+
+.brand {
+    position: absolute;
+    margin-top: -15px;
+    left: 15px;
+    top: 32px;
+}
+
+.brand img {
+    height: 42px;
+}
+
+.login-card {
+    position: relative;
+    width: 500px;
+    padding: 48px;
+    border-radius: 38px;
+    /* background: rgba(255, 255, 255, .24); */
+    /* backdrop-filter: blur(30px) saturate(180%); */
+    /* -webkit-backdrop-filter: blur(30px) saturate(180%); */
+    border: 1.5px solid rgba(255, 255, 255, 0.62);
+    box-shadow:
+        0 20px 80px rgba(0, 0, 0, .12),
+        inset 0 1px rgba(255, 255, 255, .85),
+        0 0 30px rgba(53, 48, 48, 0.12);
+    overflow: hidden;
+}
+
+.glass-highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(255, 255, 255, .55), transparent 24%),
+        radial-gradient(circle at 96% 12%, rgba(255, 255, 255, .35), transparent 18%),
+        linear-gradient(130deg, rgba(255, 255, 255, .30), transparent 40%);
+}
+
+.logo {
+    display: block;
+    width: 120px;
+    margin: 0 auto 8px;
+    position: relative;
+    z-index: 1;
+}
+
+h1 {
+    font-size: 48px;
+    text-align: center;
+    margin-top: 8px;
+    color: #000000;
+    position: relative;
+    z-index: 1;
+}
+
+.subtitle {
+    text-align: center;
+    margin: 10px 0 30px;
+    color: #4d5b6c;
+    position: relative;
+    z-index: 1;
+}
+
+label {
+    display: block;
+    margin: 16px 0 8px;
+    font-weight: 600;
+    color: #34404f;
+    position: relative;
+    z-index: 1;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 60px;
+    padding: 0 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .42);
+    border: 1px solid rgba(255, 255, 255, .75);
+    position: relative;
+    z-index: 1;
+}
+
+.input-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+}
+
+.input-box i {
+    color: #6a7480;
+}
+
+.login-message {
+    min-height: 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    color: #1c8a4c;
+    opacity: 0;
+    transition: opacity .15s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.login-message--visible {
+    opacity: 1;
+}
+
+.login-message--error {
+    color: #d9384a;
+}
+
+#login-eye-toggle {
+    cursor: pointer;
+}
+
+.login-btn:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-btn {
+    margin-top: 28px;
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(90deg, #2064ff, #3d83ff);
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 15px 40px rgba(32, 100, 255, .35);
+    transition: .25s;
+    position: relative;
+    z-index: 1;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 50px rgba(18, 67, 180, 0.45);
+}
+
+.divider {
+    margin: 24px 0 18px;
+    text-align: center;
+    color: #5e6874;
+    position: relative;
+    z-index: 1;
+}
+
+.socials {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.socials button {
+    flex: 1;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .45);
+    border: 1px solid rgba(255, 255, 255, .8);
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+@media(max-width:900px) {
+    body {
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .login-card {
+        width: min(95vw, 500px);
+    }
+
+    .brand {
+        left: 20px;
+        top: 20px;
+    }
+}
