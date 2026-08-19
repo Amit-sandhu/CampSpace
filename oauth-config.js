@@ -93,7 +93,7 @@ window.CAMPSPACE_OAUTH_CONFIG = {
      3. Copy the "Search engine ID" (cx) into searchEngineId below.
      --------------------------------------------------------------- */
   googleSearch: {
-    searchEngineId: 'YOUR_GOOGLE_SEARCH_ENGINE_ID'
+    searchEngineId: '37e75efdd544a44fe'
   },
 
   microsoft: {
