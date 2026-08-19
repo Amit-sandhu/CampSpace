@@ -1,526 +1,528 @@
 /* ================================================================
-   CampSpace — Google OAuth
+   CampSpace - Google OAuth
+
+   This file handles Google Sign-In for the custom CampSpace
+   Google button.
+
+   oauth-config.js MUST be loaded before this file.
    ================================================================ */
 
 (function () {
-    "use strict";
+  'use strict';
+
+  /* -------------------------------------------------------------
+     Get Google Client ID from oauth-config.js
+     ------------------------------------------------------------- */
+
+  var oauthConfig = window.CAMPSPACE_OAUTH_CONFIG || {};
+  var googleConfig = oauthConfig.google || {};
+  var clientId = googleConfig.clientId;
+
+
+  /* -------------------------------------------------------------
+     Check whether Client ID exists
+     ------------------------------------------------------------- */
+
+  function isPlaceholder(value) {
+    if (!value) {
+      return true;
+    }
+
+    if (value.indexOf('YOUR_') === 0) {
+      return true;
+    }
+
+    if (value.indexOf('YOUR-') !== -1) {
+      return true;
+    }
+
+    return false;
+  }
+
+
+  /* -------------------------------------------------------------
+     Show message on login page
+     ------------------------------------------------------------- */
+
+  function showMessage(text, isError) {
+    var messageEl = document.getElementById('login-message');
+
+    if (!messageEl) {
+      return;
+    }
+
+    messageEl.textContent = text;
+
+    if (isError) {
+      messageEl.classList.add('login-message--error');
+    } else {
+      messageEl.classList.remove('login-message--error');
+    }
+
+    if (text) {
+      messageEl.classList.add('login-message--visible');
+    } else {
+      messageEl.classList.remove('login-message--visible');
+    }
+  }
+
+
+  /* -------------------------------------------------------------
+     Load Google Identity Services
+     ------------------------------------------------------------- */
+
+  function loadGoogleScript(onReady) {
+
+    var src = 'https://accounts.google.com/gsi/client';
 
     /*
-     * Get Google Client ID from oauth-config.js
+     * Google library already loaded
      */
-    const GOOGLE_CLIENT_ID =
-        window.CAMPSPACE_OAUTH_CONFIG?.google?.clientId;
-
-
-    /* ============================================================
-       CHECK CONFIG
-       ============================================================ */
-
-    if (!GOOGLE_CLIENT_ID ||
-        GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE")) {
-
-        console.error(
-            "CampSpace OAuth: Google Client ID is missing."
-        );
-
-        return;
+    if (
+      window.google &&
+      window.google.accounts &&
+      window.google.accounts.id
+    ) {
+      onReady();
+      return;
     }
 
 
-    /* ============================================================
-       LOAD GOOGLE IDENTITY SERVICES
-       ============================================================ */
-
-    function loadGoogleScript() {
-
-        return new Promise((resolve, reject) => {
-
-            /*
-             * Already loaded
-             */
-            if (
-                window.google &&
-                window.google.accounts &&
-                window.google.accounts.id
-            ) {
-                resolve();
-                return;
-            }
+    /*
+     * Check if another script is already loading it
+     */
+    var existingScript =
+      document.querySelector(
+        'script[data-campspace-google-oauth="true"]'
+      );
 
 
-            /*
-             * Check if script already exists
-             */
-            const existingScript =
-                document.querySelector(
-                    'script[src="https://accounts.google.com/gsi/client"]'
-                );
+    if (existingScript) {
 
+      existingScript.addEventListener(
+        'load',
+        onReady
+      );
 
-            if (existingScript) {
+      existingScript.addEventListener(
+        'error',
+        function () {
+          showMessage(
+            'Could not load Google Sign-In.',
+            true
+          );
+        }
+      );
 
-                existingScript.addEventListener(
-                    "load",
-                    resolve
-                );
-
-                existingScript.addEventListener(
-                    "error",
-                    reject
-                );
-
-                return;
-            }
-
-
-            /*
-             * Create Google script
-             */
-            const script =
-                document.createElement("script");
-
-            script.src =
-                "https://accounts.google.com/gsi/client";
-
-            script.async = true;
-            script.defer = true;
-
-
-            script.onload = resolve;
-
-            script.onerror = function () {
-
-                reject(
-                    new Error(
-                        "Google Identity Services failed to load."
-                    )
-                );
-
-            };
-
-
-            document.head.appendChild(script);
-
-        });
-
+      return;
     }
 
 
-    /* ============================================================
-       GOOGLE LOGIN CALLBACK
-       ============================================================ */
+    /*
+     * Create Google script
+     */
+    var script =
+      document.createElement('script');
 
-    function handleGoogleLogin(response) {
+    script.src = src;
+    script.async = true;
+    script.defer = true;
 
-        console.log(
-            "Google login response received."
-        );
+    script.setAttribute(
+      'data-campspace-google-oauth',
+      'true'
+    );
 
+
+    script.addEventListener(
+      'load',
+      function () {
 
         if (
-            !response ||
-            !response.credential
+          window.google &&
+          window.google.accounts &&
+          window.google.accounts.id
         ) {
-
-            showMessage(
-                "Google login failed. Please try again."
-            );
-
-            return;
+          onReady();
+        } else {
+          showMessage(
+            'Google Sign-In loaded incorrectly.',
+            true
+          );
         }
 
-
-        /*
-         * Decode the Google ID token
-         */
-        const user =
-            decodeJwt(response.credential);
+      }
+    );
 
 
-        if (!user) {
+    script.addEventListener(
+      'error',
+      function () {
 
-            showMessage(
-                "Unable to read Google account information."
-            );
-
-            return;
-        }
-
-
-        console.log(
-            "Google user:",
-            user
+        showMessage(
+          'Could not reach Google Sign-In. Check your internet connection.',
+          true
         );
 
-
-        /*
-         * Create CampSpace user
-         */
-        const campSpaceUser = {
-
-            id: user.sub,
-
-            name:
-                user.name ||
-                user.given_name ||
-                "Google User",
-
-            firstName:
-                user.given_name || "",
-
-            lastName:
-                user.family_name || "",
-
-            email:
-                user.email || "",
-
-            picture:
-                user.picture || "",
-
-            provider:
-                "google",
-
-            emailVerified:
-                user.email_verified === true,
-
-            loginTime:
-                new Date().toISOString()
-
-        };
+      }
+    );
 
 
-        /*
-         * Save user
-         */
-        localStorage.setItem(
-            "campspace_user",
-            JSON.stringify(campSpaceUser)
-        );
+    document.head.appendChild(script);
+  }
 
 
-        localStorage.setItem(
-            "campspace_logged_in",
-            "true"
-        );
+  /* -------------------------------------------------------------
+     Decode Google ID token
+     ------------------------------------------------------------- */
+
+  function decodeJwt(token) {
+
+    try {
+
+      var parts = token.split('.');
+
+      if (parts.length !== 3) {
+        return null;
+      }
 
 
-        localStorage.setItem(
-            "campspace_auth_provider",
-            "google"
-        );
+      var base64Url = parts[1];
+
+      var base64 =
+        base64Url
+          .replace(/-/g, '+')
+          .replace(/_/g, '/');
 
 
-        /*
-         * Store Google credential for this browser session
-         */
-        sessionStorage.setItem(
-            "campspace_google_credential",
-            response.credential
-        );
+      /*
+       * Add missing Base64 padding
+       */
+      while (base64.length % 4 !== 0) {
+        base64 += '=';
+      }
 
 
-        console.log(
-            "CampSpace Google login successful:",
-            campSpaceUser
-        );
+      var binary =
+        atob(base64);
 
 
-        /*
-         * Notify auth.js / other CampSpace code
-         */
-        document.dispatchEvent(
-            new CustomEvent(
-                "campspace:google-login",
-                {
-                    detail: campSpaceUser
-                }
-            )
-        );
+      var bytes = '';
+
+      for (var i = 0; i < binary.length; i++) {
+
+        bytes +=
+          '%' +
+          ('00' + binary.charCodeAt(i).toString(16))
+            .slice(-2);
+
+      }
 
 
-        /*
-         * If auth.js provides a callback
-         */
-        if (
-            typeof window.onCampSpaceGoogleLogin ===
-            "function"
-        ) {
-
-            window.onCampSpaceGoogleLogin(
-                campSpaceUser
-            );
-
-        }
+      var jsonPayload =
+        decodeURIComponent(bytes);
 
 
-        /*
-         * Redirect after successful login
-         *
-         * Change this later if your dashboard has
-         * another filename.
-         */
-        window.location.href = "dashboard.html";
+      return JSON.parse(jsonPayload);
 
+    } catch (error) {
+
+      console.error(
+        'CampSpace Google OAuth: Could not decode token.',
+        error
+      );
+
+      return null;
+    }
+  }
+
+
+  /* -------------------------------------------------------------
+     Google login successful
+     ------------------------------------------------------------- */
+
+  function handleGoogleCredential(response) {
+
+    if (
+      !response ||
+      !response.credential
+    ) {
+
+      showMessage(
+        'Google sign-in failed. Please try again.',
+        true
+      );
+
+      return;
     }
 
 
-    /* ============================================================
-       DECODE GOOGLE JWT
-       ============================================================ */
-
-    function decodeJwt(token) {
-
-        try {
-
-            const parts =
-                token.split(".");
-
-            if (parts.length !== 3) {
-
-                throw new Error(
-                    "Invalid JWT"
-                );
-
-            }
+    /*
+     * Decode Google's ID token
+     */
+    var profile =
+      decodeJwt(response.credential);
 
 
-            const base64Url =
-                parts[1];
+    if (!profile) {
 
+      showMessage(
+        'Could not read your Google account information.',
+        true
+      );
 
-            const base64 =
-                base64Url
-                    .replace(/-/g, "+")
-                    .replace(/_/g, "/");
-
-
-            const jsonPayload =
-                decodeURIComponent(
-                    atob(base64)
-                        .split("")
-                        .map(function (char) {
-
-                            return (
-                                "%" +
-                                (
-                                    "00" +
-                                    char
-                                        .charCodeAt(0)
-                                        .toString(16)
-                                ).slice(-2)
-                            );
-
-                        })
-                        .join("")
-                );
-
-
-            return JSON.parse(
-                jsonPayload
-            );
-
-        } catch (error) {
-
-            console.error(
-                "CampSpace: JWT decoding failed.",
-                error
-            );
-
-            return null;
-        }
-
+      return;
     }
 
 
-    /* ============================================================
-       SHOW LOGIN MESSAGE
-       ============================================================ */
+    /*
+     * Make sure an email was returned
+     */
+    if (!profile.email) {
 
-    function showMessage(message) {
+      showMessage(
+        'Google did not provide an email address.',
+        true
+      );
 
-        const messageElement =
-            document.getElementById(
-                "login-message"
-            );
-
-
-        if (messageElement) {
-
-            messageElement.textContent =
-                message;
-
-        }
-
+      return;
     }
 
 
-    /* ============================================================
-       INITIALIZE GOOGLE
-       ============================================================ */
-
-    async function initializeGoogleOAuth() {
-
-        try {
-
-            await loadGoogleScript();
+    console.log(
+      'CampSpace Google profile:',
+      profile
+    );
 
 
-            /*
-             * Initialize Google
-             */
-            google.accounts.id.initialize({
+    /* -----------------------------------------------------------
+       Create CampSpace user
+       ----------------------------------------------------------- */
 
-                client_id:
-                    GOOGLE_CLIENT_ID,
+    var email =
+      profile.email.toLowerCase();
 
-                callback:
-                    handleGoogleLogin,
+    var name =
+      profile.name ||
+      profile.given_name ||
+      'CampSpace User';
 
-                auto_select:
-                    false,
-
-                cancel_on_tap_outside:
-                    true
-
-            });
+    var picture =
+      profile.picture || '';
 
 
-            /*
-             * Connect your existing CampSpace
-             * Google button.
-             */
-            const googleButton =
-                document.getElementById(
-                    "social-google-btn"
-                );
+    var users =
+      window.CampSpaceAuth.getUsers();
 
 
-            if (!googleButton) {
-
-                console.error(
-                    "CampSpace: Google button not found."
-                );
-
-                return;
-            }
+    var existingUser =
+      users[email] || {};
 
 
-            /*
-             * Clicking your button starts
-             * Google's login flow.
-             */
-            googleButton.addEventListener(
-                "click",
-                function () {
+    var user = {
 
-                    console.log(
-                        "Opening Google Sign-In..."
-                    );
+      email: email,
 
+      name:
+        name ||
+        existingUser.name ||
+        window.CampSpaceAuth.nameFromEmail(email),
 
-                    google.accounts.id.prompt();
+      /*
+       * Google accounts don't use the CampSpace
+       * local password.
+       */
+      password:
+        existingUser.password || null,
 
-                }
-            );
+      picture:
+        picture ||
+        existingUser.picture ||
+        null,
 
-
-            console.log(
-                "CampSpace: Google OAuth initialized."
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "CampSpace: Google OAuth initialization failed.",
-                error
-            );
-
-
-            showMessage(
-                "Google Sign-In could not be loaded."
-            );
-
-        }
-
-    }
-
-
-    /* ============================================================
-       LOGOUT
-       ============================================================ */
-
-    function logoutGoogle() {
-
-        if (
-            window.google &&
-            window.google.accounts &&
-            window.google.accounts.id
-        ) {
-
-            window.google.accounts.id.disableAutoSelect();
-
-        }
-
-
-        localStorage.removeItem(
-            "campspace_user"
-        );
-
-        localStorage.removeItem(
-            "campspace_logged_in"
-        );
-
-        localStorage.removeItem(
-            "campspace_auth_provider"
-        );
-
-        sessionStorage.removeItem(
-            "campspace_google_credential"
-        );
-
-    }
-
-
-    /* ============================================================
-       PUBLIC API
-       ============================================================ */
-
-    window.CampSpaceOAuth = {
-
-        google: {
-
-            login:
-                initializeGoogleOAuth,
-
-            logout:
-                logoutGoogle
-
-        },
-
-        logout:
-            logoutGoogle
+      provider:
+        'google'
 
     };
 
 
-    /* ============================================================
-       START
-       ============================================================ */
+    /*
+     * Save / update user
+     */
+    users[email] = user;
 
-    if (
-        document.readyState === "loading"
-    ) {
+    window.CampSpaceAuth.saveUsers(users);
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            initializeGoogleOAuth
+
+    /*
+     * Create CampSpace session
+     */
+    window.CampSpaceAuth.setSession(user);
+
+
+    /*
+     * Store Google credential for this browser session.
+     *
+     * Important:
+     * This is only being kept because this is currently
+     * a client-side prototype.
+     */
+    sessionStorage.setItem(
+      'campspace_google_credential',
+      response.credential
+    );
+
+
+    showMessage(
+      'Success — redirecting…',
+      false
+    );
+
+
+    /*
+     * Redirect to the same dashboard used by
+     * normal email/password login.
+     */
+    window.setTimeout(
+      function () {
+
+        window.location.href =
+          'main.html';
+
+      },
+      350
+    );
+  }
+
+
+  /* -------------------------------------------------------------
+     Initialize Google
+     ------------------------------------------------------------- */
+
+  function initializeGoogleOAuth() {
+
+    /*
+     * Make sure Client ID exists
+     */
+    if (isPlaceholder(clientId)) {
+
+      console.error(
+        'CampSpace Google OAuth: Client ID is missing.'
+      );
+
+      return;
+    }
+
+
+    /*
+     * Find your existing CampSpace Google button
+     */
+    var googleBtn =
+      document.getElementById(
+        'social-google-btn'
+      );
+
+
+    if (!googleBtn) {
+
+      /*
+       * This is fine if we're not on the login page.
+       */
+      return;
+    }
+
+
+    /*
+     * Load Google's library
+     */
+    loadGoogleScript(
+      function () {
+
+        /*
+         * Initialize Google Identity Services
+         */
+        google.accounts.id.initialize({
+
+          client_id: clientId,
+
+          callback:
+            handleGoogleCredential,
+
+          auto_select: false,
+
+          cancel_on_tap_outside: true
+
+        });
+
+
+        /*
+         * Connect Google's authentication to
+         * your existing CampSpace button.
+         */
+        googleBtn.addEventListener(
+          'click',
+          function () {
+
+            showMessage(
+              'Opening Google sign-in…',
+              false
+            );
+
+
+            /*
+             * Open Google One Tap / account selector
+             */
+            google.accounts.id.prompt(
+              function (notification) {
+
+                /*
+                 * If Google cannot display the prompt,
+                 * give a useful message.
+                 */
+                if (
+                  notification.isNotDisplayed() ||
+                  notification.isSkippedMoment()
+                ) {
+
+                  console.log(
+                    'Google prompt was not displayed.'
+                  );
+
+                }
+
+              }
+            );
+
+          }
         );
 
-    } else {
 
-        initializeGoogleOAuth();
+        console.log(
+          'CampSpace: Google OAuth initialized successfully.'
+        );
 
-    }
+      }
+    );
+  }
+
+
+  /* -------------------------------------------------------------
+     Start OAuth after page is ready
+     ------------------------------------------------------------- */
+
+  if (
+    document.readyState === 'loading'
+  ) {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initializeGoogleOAuth
+    );
+
+  } else {
+
+    initializeGoogleOAuth();
+
+  }
 
 })();
