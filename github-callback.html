@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signing in with GitHub — CampSpace</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/x-icon" href="images/favicon3.ico">
+<style>
+  .github-callback-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:14px; text-align:center; padding:24px;
+    font-family:'Segoe UI',system-ui,sans-serif; color:#fff;
+  }
+  .github-callback-spinner{
+    width:34px; height:34px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.25); border-top-color:#fff;
+    animation:github-callback-spin 0.8s linear infinite;
+  }
+  @keyframes github-callback-spin{ to{ transform:rotate(360deg); } }
+  .github-callback-message{ max-width:420px; font-size:14.5px; line-height:1.6; opacity:.9; }
+  .github-callback-error{ color:#FFB4B4; }
+  .github-callback-link{ color:#fff; text-decoration:underline; }
+</style>
+</head>
+<body style="background:#0B0B0D;">
+
+  <div class="github-callback-wrap">
+    <div class="github-callback-spinner" id="github-callback-spinner"></div>
+    <p class="github-callback-message" id="github-callback-message">Finishing GitHub sign-in…</p>
+  </div>
+
+  <script src="oauth-config.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    (function () {
+      var messageEl = document.getElementById('github-callback-message');
+      var spinnerEl = document.getElementById('github-callback-spinner');
+
+      function fail(text) {
+        if (spinnerEl) {
+          spinnerEl.style.display = 'none';
+        }
+        messageEl.className = 'github-callback-message github-callback-error';
+        messageEl.innerHTML = text + '<br><br><a class="github-callback-link" href="login.html">Back to sign in</a>';
+      }
+
+      var params = new URLSearchParams(window.location.search);
+      var code = params.get('code');
+      var state = params.get('state');
+      var errorParam = params.get('error');
+
+      if (errorParam) {
+        fail('GitHub sign-in was cancelled.');
+        return;
+      }
+
+      var expectedState = sessionStorage.getItem('campspace_github_oauth_state');
+      sessionStorage.removeItem('campspace_github_oauth_state');
+
+      if (!code || !state || state !== expectedState) {
+        fail('This sign-in link is invalid or expired. Please try again from the sign-in page.');
+        return;
+      }
+
+      var config = (window.CAMPSPACE_OAUTH_CONFIG && window.CAMPSPACE_OAUTH_CONFIG.github) || {};
+
+      if (!config.tokenExchangeUrl || config.tokenExchangeUrl.indexOf('YOUR-') !== -1) {
+        fail(
+          'GitHub sign-in needs a small backend endpoint to finish securely \u2014 ' +
+          'see the setup steps in oauth-config.js and the example in ' +
+          '/backend-examples/github-oauth-exchange.js.'
+        );
+        return;
+      }
+
+      // Ask our own backend to trade the temporary "code" for a real
+      // access token. This is the one step GitHub requires a server
+      // for, because it needs the app's Client Secret.
+      fetch(config.tokenExchangeUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code, redirect_uri: config.redirectUri })
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Token exchange failed');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data || !data.access_token) {
+            throw new Error('No access token returned');
+          }
+          return fetchGitHubProfile(data.access_token);
+        })
+        .catch(function () {
+          fail('Could not complete GitHub sign-in. Check that your backend token-exchange endpoint is deployed and reachable.');
+        });
+
+      function fetchGitHubProfile(accessToken) {
+        var authHeader = { Authorization: 'Bearer ' + accessToken, Accept: 'application/vnd.github+json' };
+
+        Promise.all([
+          fetch('https://api.github.com/user', { headers: authHeader }).then(function (r) { return r.json(); }),
+          fetch('https://api.github.com/user/emails', { headers: authHeader }).then(function (r) { return r.json(); })
+        ]).then(function (results) {
+          var profile = results[0];
+          var emails = results[1];
+
+          var primaryEmail = profile.email;
+          if (!primaryEmail && Array.isArray(emails)) {
+            for (var i = 0; i < emails.length; i++) {
+              if (emails[i].primary) {
+                primaryEmail = emails[i].email;
+                break;
+              }
+            }
+            if (!primaryEmail && emails[0]) {
+              primaryEmail = emails[0].email;
+            }
+          }
+
+          if (!primaryEmail) {
+            fail('GitHub did not share an email address for this account. Make your GitHub email public, or grant email access, and try again.');
+            return;
+          }
+
+          var users = window.CampSpaceAuth.getUsers();
+          var user = {
+            email: primaryEmail,
+            name: profile.name || profile.login,
+            password: null,
+            picture: profile.avatar_url,
+            provider: 'github'
+          };
+          users[primaryEmail] = user;
+          window.CampSpaceAuth.saveUsers(users);
+          window.CampSpaceAuth.setSession(user);
+
+          window.location.href = 'main.html';
+        }).catch(function () {
+          fail('Signed in, but could not load your GitHub profile.');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

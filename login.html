@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampSpace Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon3.ico">
+</head>
+
+<body>
+
+    <video autoplay muted loop playsinline class="background-video">
+        <source src="videos/login_bg_loop.mp4" type="video/mp4">
+    </video>
+
+    <header class="brand">
+        <img src="images/campspace_text.png" alt="CampSpace">
+    </header>
+
+    <div class="login-card">
+        <div class="glass-highlight"></div>
+
+        <img class="logo" src="images/octopus.png" alt="CampSpace">
+
+        <h1 id="login-heading">Welcome back</h1>
+        <p class="subtitle" id="login-subtitle">Sign in to continue to your workspace</p>
+
+        <label for="login-email">Email</label>
+        <div class="input-box">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="login-email" placeholder="you@campspace.edu" autocomplete="email">
+        </div>
+
+        <label for="login-password">Password</label>
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+            <i class="fa-regular fa-eye" id="login-eye-toggle"></i>
+        </div>
+
+        <p class="login-message" id="login-message"></p>
+
+        <button class="login-btn" id="login-btn" type="button">
+            <span id="login-btn-label">Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div class="divider">or continue with</div>
+
+        <div class="socials">
+            <button type="button" id="social-github-btn" aria-label="Sign in with GitHub"><img height="30px" src="https://cdn-icons-png.flaticon.com/512/25/25231.png"></button>
+            <button type="button" id="social-google-btn" aria-label="Sign in with Google"><img height="30px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png"></button>
+            <button type="button" id="social-microsoft-btn" aria-label="Sign in with Microsoft"><img height="35px" src="https://static.vecteezy.com/system/resources/thumbnails/027/127/473/small/microsoft-logo-microsoft-icon-transparent-free-png.png"></button>
+        </div>
+
+        <div class="footer-links">
+            <a href="#" id="login-forgot">Forgot password?</a>
+            <a href="#" id="login-toggle-mode">Create account →</a>
+        </div>
+    </div>
+
+    <script src="oauth-config.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>
