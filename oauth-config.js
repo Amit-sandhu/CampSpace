@@ -69,9 +69,9 @@
 
 window.CAMPSPACE_OAUTH_CONFIG = {
 
-  google: {
-    clientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
-  },
+   google: {
+       clientId: '232874789719-s9r263p286qmj4ee8m1or5n8bfatqdtv.apps.googleusercontent.com'
+   },
 
   /* ---------------------------------------------------------------
      GOOGLE SEARCH WIDGET  (for the in-app Browser)
