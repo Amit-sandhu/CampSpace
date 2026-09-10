@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/readme_logo.png" alt="CampSpace Logo" width="450"/>
+<img src="images/campspace_text.png" alt="CampSpace Logo" width="450"/>
 
 # CampSpace
 <h2>https://amit-sandhu.github.io/CampSpace/</h2>
