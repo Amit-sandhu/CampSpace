@@ -3,7 +3,6 @@
 <img src="public/images/readme_logo.png" alt="CampSpace Logo" width="450"/>
 
 # CampSpace
-<h2>https://amit-sandhu.github.io/CampSpace/</h2>
 Organize. Collaborate. Achieve more.
 
 A modern all-in-one collaborative workspace built for students.
