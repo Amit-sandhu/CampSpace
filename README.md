@@ -77,11 +77,11 @@ assets/
 
 ## 👥 Team
 
-| Name | Role |
-|------|------|
-| Your Name | Project Lead |
-| Member 2 | Frontend |
-| Member 3 | Backend |
+| Name |
+|------|
+| Amiteshwar Singh Sandhu |
+| Aditya Bhardwaj |
+| Aryan Mehra |
 
 ---
 
