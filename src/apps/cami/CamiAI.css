@@ -1,0 +1,375 @@
+/*
+ * BEGINNER GUIDE: src/apps/cami/CamiAI.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, CSS box model.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+/* Page Root & Main Layout */
+.cami-page {
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  background-color: #131314;
+  color: #e3e3e3;
+  display: flex;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Left Sidebar */
+.cami-sidebar {
+  background-color: #1e1f20;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s ease;
+  z-index: 30;
+  border-right: 1px solid #282a2c;
+}
+
+.cami-sidebar.open {
+  width: 260px;
+}
+
+.cami-sidebar.closed {
+  width: 68px;
+}
+
+.cami-sidebar-top {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cami-icon-btn {
+  background: transparent;
+  border: none;
+  color: #e3e3e3;
+  font-size: 20px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cami-icon-btn:hover {
+  background-color: #282a2c;
+}
+
+/* New Chat Button */
+.cami-new-chat-btn {
+  background-color: #1a1a1a;
+  border: 1px solid #333537;
+  color: #e3e3e3;
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.cami-new-chat-btn:hover {
+  background-color: #282a2c;
+}
+
+.plus-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Recent Chat History */
+.cami-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 8px;
+  scrollbar-width: none;
+}
+
+.cami-history-list::-webkit-scrollbar {
+  display: none;
+}
+
+.cami-history-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e918f;
+  padding: 8px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cami-no-history {
+  font-size: 13px;
+  color: #8e918f;
+  padding: 12px;
+}
+
+.cami-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #e3e3e3;
+  font-size: 14px;
+  margin-bottom: 2px;
+  transition: background-color 0.15s ease;
+}
+
+.cami-history-item:hover {
+  background-color: #282a2c;
+}
+
+.cami-history-item.active {
+  background-color: #004a77;
+  color: #c2e7ff;
+}
+
+.cami-chat-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cami-delete-btn {
+  background: transparent;
+  border: none;
+  color: #8e918f;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cami-history-item:hover .cami-delete-btn {
+  opacity: 1;
+}
+
+.cami-delete-btn:hover {
+  color: #f2b8b5;
+}
+
+/* Right Main Layout */
+.cami-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+}
+
+.cami-brand {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+}
+
+.cami-brand-icon {
+  font-size: 18px;
+  color: #a8c7fa;
+}
+
+.cami-brand-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #e3e3e3;
+  letter-spacing: -0.2px;
+}
+
+.cami-container {
+  width: 100%;
+  max-width: 820px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0 16px;
+}
+
+/* Chat Canvas & Invisible Scrollbar */
+.cami-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 80px;
+  padding-bottom: 140px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cami-chat::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.cami-welcome {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cami-welcome h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 500;
+  background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+}
+
+.cami-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.cami-message-row {
+  display: flex;
+  width: 100%;
+}
+
+.cami-row-user {
+  justify-content: flex-end;
+}
+
+.cami-row-model,
+.cami-row-error {
+  justify-content: flex-start;
+}
+
+.cami-user-box {
+  max-width: 80%;
+  background-color: #282a2c;
+  color: #e3e3e3;
+  padding: 14px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  word-break: break-word;
+}
+
+.cami-model-text {
+  max-width: 100%;
+  color: #e3e3e3;
+  font-size: 15px;
+  line-height: 1.65;
+  padding: 4px 0;
+}
+
+.cami-thinking {
+  color: #8e918f;
+  font-style: italic;
+}
+
+.cami-model-text code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: #1e1f20;
+  color: #f0f4f9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+}
+
+/* Floating Input Dock */
+.cami-input-container {
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(19, 19, 20, 0) 0%, #131314 35%);
+  padding-bottom: 16px;
+  z-index: 10;
+}
+
+.cami-input-box {
+  width: 100%;
+  max-width: 820px;
+  background-color: #1e1f20;
+  border: 1px solid #333537;
+  border-radius: 28px;
+  padding: 10px 14px 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cami-input-box:focus-within {
+  border-color: #444746;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.cami-input-box textarea {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #e3e3e3;
+  font-size: 15px;
+  line-height: 1.45;
+  resize: none;
+  max-height: 140px;
+}
+
+.cami-input-box textarea::placeholder {
+  color: #8e918f;
+}
+
+.cami-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #e3e3e3;
+  color: #131314;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  flex-shrink: 0;
+}
+
+.cami-send-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.04);
+}
+
+.cami-send-btn:disabled {
+  background-color: #333537;
+  color: #8e918f;
+  cursor: default;
+  opacity: 0.6;
+}
+
+.cami-disclaimer {
+  font-size: 11px;
+  color: #8e918f;
+  margin-top: 8px;
+  text-align: center;
+}

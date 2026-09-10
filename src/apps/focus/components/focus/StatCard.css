@@ -1,0 +1,165 @@
+/*
+ * BEGINNER GUIDE: src/apps/focus/components/focus/StatCard.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, Responsive design / media queries, CSS box model.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+/* =========================================================
+   STAT CARD
+   FINAL PRESENTATION UI
+   VISUAL ONLY — NO LOGIC CHANGES
+========================================================= */
+
+.stat-card {
+  min-height: 118px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 21px;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(45,83,140,0.08);
+  backdrop-filter: blur(15px);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(45,83,140,0.12);
+}
+
+.stat-icon {
+  width: 63px;
+  height: 63px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.stat-icon svg {
+  width: 37px;
+  height: 37px;
+}
+
+.stat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-content h3 {
+  margin: 0 0 7px;
+  color: #3a4d70;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 650;
+}
+
+.stat-content strong {
+  display: block;
+  color: #10194d;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: -0.5px;
+}
+
+.stat-content p {
+  margin: 6px 0 0;
+  color: #7e8da5;
+  font-size: 10px;
+}
+
+.stat-progress {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+}
+
+.stat-progress-track {
+  width: 126px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #dbe7f5;
+}
+
+.stat-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg,#2563eb,#1592ff);
+}
+
+.stat-progress span {
+  color: #5570a0;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.stat-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.stat-trend-arrow {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.stat-trend.up { color: #08a974; }
+.stat-trend.down { color: #ed414b; }
+
+.stat-trend.neutral {
+  color: #8393ac;
+  font-weight: 600;
+}
+
+.stat-card.blue .stat-icon {
+  color: #2563eb;
+  background: linear-gradient(145deg,#eaf2ff,#dceaff);
+}
+
+.stat-card.green .stat-icon {
+  color: #08a974;
+  background: linear-gradient(145deg,#e3faf1,#d5f6e8);
+}
+
+.stat-card.purple .stat-icon {
+  color: #703fde;
+  background: linear-gradient(145deg,#f0eaff,#e4dcff);
+}
+
+.stat-card.red .stat-icon {
+  color: #ed414b;
+  background: linear-gradient(145deg,#ffedef,#ffe0e4);
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width:850px) {
+  .stat-card {
+    min-height: 108px;
+  }
+
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .stat-content strong {
+    font-size: 24px;
+  }
+}
