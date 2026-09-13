@@ -1,9 +1,8 @@
 <div align="center">
 
-<img src="images/readme_logo.png" alt="CampSpace Logo" width="450"/>
+<img src="public/images/readme_logo.png" alt="CampSpace Logo" width="450"/>
 
 # CampSpace
-<h2>https://amit-sandhu.github.io/CampSpace/</h2>
 Organize. Collaborate. Achieve more.
 
 A modern all-in-one collaborative workspace built for students.
@@ -78,11 +77,11 @@ assets/
 
 ## 👥 Team
 
-| Name | Role |
-|------|------|
-| Your Name | Project Lead |
-| Member 2 | Frontend |
-| Member 3 | Backend |
+| Name |
+|------|
+| Amiteshwar Singh Sandhu |
+| Aditya Bhardwaj |
+| Aryan Mehra |
 
 ---
 
