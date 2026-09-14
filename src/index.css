@@ -1,0 +1,30 @@
+/*
+ * BEGINNER GUIDE: src/index.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: CSS3 fundamentals.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+html { scroll-behavior: auto; }
+
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+/* Routed pages never reserve space for navigation. The sidebar is a true overlay. */
+.campspace-route-shell {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.campspace-route-content {
+  width: 100%;
+  min-height: 100vh;
+}

@@ -1,0 +1,77 @@
+/*
+ * BEGINNER GUIDE: FEE syllabus CSS
+ * This file intentionally uses a mobile-first layout: the base rules are for small screens.
+ * Flexbox handles the navigation row and Grid handles the card layout.
+ * The media query expands the layout on wider screens without affecting CampSpace's existing CSS.
+ */
+
+.fee-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+
+.fee-header {
+  max-width: 900px;
+  margin: 0 auto 20px;
+}
+
+.fee-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 900px;
+  margin: 0 auto 20px;
+}
+
+.fee-nav a {
+  padding: 8px 12px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.fee-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.fee-card {
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.fee-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fee-card input,
+.fee-card button {
+  box-sizing: border-box;
+  padding: 10px;
+  font: inherit;
+}
+
+@media (min-width: 700px) {
+  .fee-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fee-card form {
+    flex-direction: row;
+    align-items: end;
+  }
+
+  .fee-card input {
+    flex: 1;
+  }
+}

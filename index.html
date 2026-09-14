@@ -1,0 +1,26 @@
+<!--
+  BEGINNER GUIDE: index.html
+  HTML5 entry structure, semantic/accessibility basics and the responsive viewport are defined here.
+  This file starts the React application without changing the existing page behaviour.
+-->
+
+<!doctype html>
+<!-- FEE: HTML5 document structure. The root element provides the page metadata and the #root container is where React mounts the SPA. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fb" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon3.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <title>CampSpace</title>
+  </head>
+  <body>
+  <!-- React mounts the complete application inside this semantic body container. Browser accessibility/dev-tools inspection starts here. -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

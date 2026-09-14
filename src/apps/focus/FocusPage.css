@@ -1,0 +1,541 @@
+/*
+ * BEGINNER GUIDE: src/apps/focus/FocusPage.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, CSS Grid, Responsive design / media queries, CSS box model.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+/* =========================================================
+   CAMPSPACE FOCUS PAGE
+   FINAL PRESENTATION UI
+   ONLY FONT / VISIBILITY POLISH
+   NO LOGIC CHANGES
+========================================================= */
+.campspace-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Left Section */
+.topbar-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.topbar-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.topbar-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Right Section */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #059669;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.topbar-user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.focus-main {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-page {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  padding: 30px 32px 38px;
+}
+
+.focus-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.focus-main-icon {
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #f0f8ff 0%,
+      #dceeff 48%,
+      #c8e2ff 100%
+    );
+  color: #1472ff;
+  box-shadow: 0 12px 28px rgba(37,99,235,0.12);
+}
+
+.focus-main-icon svg {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1.9;
+}
+
+.focus-header h1 {
+  margin: 0;
+  color: #08134b;
+  font-size: 40px;
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: -1.3px;
+}
+
+.focus-header p {
+  margin: 7px 0 0;
+  color: #5775aa;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.focus-stats {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.focus-main-grid {
+  display: grid;
+  grid-template-columns: 1.42fr 1fr 1.10fr;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+.focus-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.42fr 1fr 0.91fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* presentation sizing */
+.stat-icon svg { width: 37px; height: 37px; }
+
+.stat-content h3 {
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+.stat-content strong {
+  font-size: 30px !important;
+  line-height: 1.05 !important;
+}
+
+.stat-content p {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+.stat-progress span { font-size: 10px !important; }
+.stat-trend { font-size: 11px !important; }
+
+.tasks-title h2 {
+  font-size: 21px !important;
+  line-height: 1.1 !important;
+}
+
+.tasks-title > span { font-size: 25px !important; }
+.add-task-button { font-size: 12px !important; }
+.task-filter { font-size: 12px !important; }
+.task-name { font-size: 14px !important; line-height: 1.25 !important; }
+.task-type { font-size: 11px !important; }
+.task-form input,
+.task-form select { font-size: 12px !important; }
+.save-task,
+.cancel-task { font-size: 12px !important; }
+.task-menu button { font-size: 12px !important; }
+
+.timer-title h2 {
+  font-size: 21px !important;
+  line-height: 1.1 !important;
+}
+
+.timer-title > span { font-size: 26px !important; }
+.timer-tab { font-size: 12px !important; }
+.timer-select label { font-size: 11px !important; }
+.timer-select select { font-size: 12px !important; }
+.custom-time label { font-size: 11px !important; }
+.custom-time input { font-size: 12px !important; }
+.timer-circle-inner strong { font-size: 31px !important; }
+.timer-circle-inner span { font-size: 11px !important; }
+.timer-start { font-size: 14px !important; }
+
+.sessions-title h2 {
+  font-size: 21px !important;
+  line-height: 1.1 !important;
+}
+
+.sessions-title p { font-size: 11px !important; }
+.sessions-view-all { font-size: 11px !important; }
+.session-details strong { font-size: 13px !important; line-height: 1.2 !important; }
+.session-details span { font-size: 10px !important; }
+.session-duration strong { font-size: 13px !important; }
+.session-duration span { font-size: 9px !important; }
+.session-time { font-size: 10px !important; }
+
+.productivity-title h2 {
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+}
+
+.productivity-title p { font-size: 11px !important; }
+.productivity-header select { font-size: 12px !important; }
+.chart-scale { font-size: 10px !important; }
+.chart-label { font-size: 11px !important; }
+.summary-text span { font-size: 10px !important; }
+.summary-text strong { font-size: 18px !important; }
+.summary-text small { font-size: 10px !important; }
+
+.insights-header h2 {
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+}
+
+.insights-header p { font-size: 11px !important; }
+.insight-item h3 { font-size: 13px !important; line-height: 1.2 !important; }
+.insight-item p { font-size: 10px !important; line-height: 1.3 !important; }
+
+.quick-tools-header h2 {
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+}
+
+.quick-tools-header p { font-size: 11px !important; }
+.quick-tool-content strong { font-size: 13px !important; }
+.quick-tool-content span { font-size: 10px !important; }
+.quick-tool-arrow { font-size: 22px !important; }
+
+.timer-title > span svg,
+.sessions-title > span svg {
+  width: 25px;
+  height: 25px;
+}
+
+.productivity-title > span svg {
+  width: 24px;
+  height: 24px;
+}
+
+.insights-header-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.quick-tools-header-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.insight-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.quick-tool-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.session-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width:1250px) {
+  .focus-page {
+    padding: 25px 23px 32px;
+  }
+
+  .focus-stats {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .focus-main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .focus-main-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .focus-bottom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .focus-bottom-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width:850px) {
+  .focus-page {
+    padding: 21px 18px 30px;
+  }
+
+  .focus-header h1 {
+    font-size: 32px;
+  }
+
+  .focus-header p {
+    font-size: 14px;
+  }
+
+  .focus-main-grid,
+  .focus-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .focus-main-grid > :first-child,
+  .focus-bottom-grid > :first-child {
+    grid-column: auto;
+  }
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width:600px) {
+  .focus-page {
+    padding: 18px 12px 26px;
+  }
+
+  .focus-header {
+    gap: 10px;
+  }
+
+  .focus-main-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .focus-main-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .focus-header h1 {
+    font-size: 25px;
+    letter-spacing: -0.5px;
+  }
+
+  .focus-header p {
+    font-size: 12px;
+  }
+
+  .focus-stats {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .focus-main-grid,
+  .focus-bottom-grid {
+    gap: 11px;
+  }
+}
+
+/* =========================================================
+   CampSpace integration
+   - CampSpace owns navigation; Focus keeps its original header,
+     topbar, cards, and feature styling.
+   - The Focus canvas itself is the scroll container, so overflow
+     produces a real scrollbar instead of clipping the lower cards.
+   - Card/grid dimensions intentionally stay fixed.
+========================================================= */
+.focus-layout {
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+  background-image:
+    linear-gradient(180deg, rgba(11,11,13,.10), rgba(11,11,13,.35)),
+    url('/images/dashboard_bg.png');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  scrollbar-width: auto;
+  scrollbar-gutter: stable;
+}
+
+.mainpage-body--dark .focus-layout {
+  background-image:
+    linear-gradient(180deg, rgba(11,11,13,.35), rgba(11,11,13,.55)),
+    url('/images/dark_bg.png');
+}
+
+.focus-layout::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.focus-layout::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, .10);
+}
+
+.focus-layout::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, .55);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+.focus-page {
+  width: 1100px;
+  min-width: 1100px;
+  padding: 28px 30px 60px;
+  margin: 0 auto;
+}
+
+.focus-stats {
+  width: 1040px;
+  min-width: 1040px;
+  grid-template-columns: repeat(4, 248px) !important;
+  gap: 16px;
+}
+
+.focus-main-grid {
+  width: 1040px;
+  min-width: 1040px;
+  grid-template-columns: 407px 286px 315px !important;
+  gap: 16px;
+}
+
+.focus-bottom-grid {
+  width: 1040px;
+  min-width: 1040px;
+  grid-template-columns: 430px 303px 275px !important;
+  gap: 16px;
+}
+
+/* Undo the original narrow-screen reflow: the requested behavior is
+   fixed-size tiles with scrolling when the viewport cannot fit them. */
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+@media (max-width: 1120px) {
+  .focus-page {
+    width: 1100px;
+    min-width: 1100px;
+    padding: 28px 30px 60px;
+  }
+
+  .focus-stats {
+    width: 1040px;
+    min-width: 1040px;
+    grid-template-columns: repeat(4, 248px) !important;
+  }
+
+  .focus-main-grid {
+    width: 1040px;
+    min-width: 1040px;
+    grid-template-columns: 407px 286px 315px !important;
+  }
+
+  .focus-bottom-grid {
+    width: 1040px;
+    min-width: 1040px;
+    grid-template-columns: 430px 303px 275px !important;
+  }
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width: 600px) {
+  .focus-page {
+    width: 1100px;
+    min-width: 1100px;
+    padding: 28px 30px 60px;
+  }
+}

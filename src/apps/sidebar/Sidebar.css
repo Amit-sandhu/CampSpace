@@ -1,0 +1,163 @@
+/*
+ * BEGINNER GUIDE: src/apps/sidebar/Sidebar.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, CSS Grid, Responsive design / media queries.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+.campspace-sidebar-menu-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 2201;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+
+.campspace-sidebar-menu-button:active { transform: scale(1.25); }
+
+.campspace-sidebar-menu-button span {
+  display: block;
+  width: 19px;
+  height: 4px;
+  border-radius: 99px;
+  background: currentColor;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+
+
+.campspace-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2090;
+  background: rgba(4, 8, 15, .18);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease, visibility 180ms ease;
+  backdrop-filter: blur(1px);
+}
+
+
+.campspace-sidebar {
+  position: fixed;
+  top: 85px;
+  left: 14px;
+  bottom: 14px;
+  z-index: 2100;
+  width: 238px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 10px;
+  box-sizing: border-box;
+  background: rgba(17, 18, 19, .78);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+  backdrop-filter: blur(22px) saturate(125%);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  transform: translateX(calc(-100% - 28px));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 190ms cubic-bezier(.22,1,.36,1), opacity 150ms ease, visibility 190ms ease;
+}
+
+.campspace-sidebar.is-open {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.campspace-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 4px 8px 18px;
+  color: #f8fafc;
+  font-weight: 750;
+  letter-spacing: -.3px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.campspace-sidebar-logo {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.campspace-sidebar-nav { display: flex; flex-direction: column; gap: 3px; }
+
+.campspace-sidebar-item {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 550;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.campspace-sidebar-item:hover,
+.campspace-sidebar-item.active {
+  background: rgba(255,255,255,.09);
+  color: #f8fafc;
+}
+
+.campspace-sidebar-item.active { font-weight: 650; }
+.campspace-sidebar-icon {
+  width: 22px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  line-height: 1;
+}
+.campspace-sidebar-label { overflow: hidden; white-space: nowrap; }
+.campspace-sidebar-spacer { flex: 1; }
+
+.campspace-sidebar-menu-button:focus-visible,
+.campspace-sidebar-item:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width: 700px) {
+  .campspace-sidebar-menu-button { top: 12px; left: 12px; }
+  .campspace-sidebar { top: 10px; left: 10px; bottom: 10px; width: min(238px, calc(100vw - 20px)); }
+}

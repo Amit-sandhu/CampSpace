@@ -1,0 +1,242 @@
+/*
+ * BEGINNER GUIDE: src/apps/focus/components/focus/FocusTimer.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, CSS Grid, CSS box model.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+/* =========================================================
+   FOCUS TIMER
+   FINAL PRESENTATION UI
+   VISUAL ONLY — NO LOGIC CHANGES
+========================================================= */
+
+.timer-card {
+  min-height: 380px;
+  padding: 20px;
+  background: rgba(255,255,255,0.87);
+  border: 1px solid rgba(255,255,255,0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(45,83,140,0.08);
+  backdrop-filter: blur(15px);
+}
+
+.timer-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.timer-title > span {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #126cff;
+  flex-shrink: 0;
+}
+
+.timer-title > span svg {
+  width: 25px;
+  height: 25px;
+}
+
+.timer-title h2 {
+  margin: 0;
+  color: #10194d;
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.timer-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.timer-tab {
+  height: 39px;
+  border: 1px solid #dce7f3;
+  border-radius: 9px;
+  background: white;
+  color: #58709a;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.timer-tab:hover {
+  transform: translateY(-1px);
+}
+
+.timer-tab.active {
+  color: white;
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 7px 15px rgba(37,99,235,0.17);
+}
+
+.custom-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.custom-time label {
+  color: #617696;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.custom-time input {
+  width: 72px;
+  height: 33px;
+  padding: 0 9px;
+  border: 1px solid #dce5f1;
+  border-radius: 7px;
+  background: white;
+  color: #2d4162;
+  outline: none;
+  font-size: 11px;
+}
+
+.custom-time input:disabled {
+  background: #f0f4f9;
+  color: #9aa9bf;
+  cursor: not-allowed;
+}
+
+.timer-select {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.timer-select label {
+  color: #526b8e;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.timer-select select {
+  width: 100%;
+  height: 39px;
+  padding: 0 10px;
+  border: 1px solid #d9e4f1;
+  border-radius: 9px;
+  background: white;
+  color: #2d4162;
+  font-size: 11px;
+  outline: none;
+}
+
+.timer-select select:disabled {
+  background: #f0f4f9;
+  color: #9aa9bf;
+  cursor: not-allowed;
+}
+
+.timer-circle-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0 14px;
+}
+
+.timer-circle {
+  width: 154px;
+  height: 154px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 18px rgba(37,99,235,0.05);
+}
+
+.timer-circle-inner {
+  width: 128px;
+  height: 128px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: white;
+}
+
+.timer-circle-inner strong {
+  color: #10194d;
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 850;
+}
+
+.timer-circle-inner span {
+  margin-top: 6px;
+  color: #8492a7;
+  font-size: 10px;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.timer-start {
+  min-width: 122px;
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#2063f4,#148fff);
+  color: white;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 9px 20px rgba(37,99,235,0.21);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.timer-start:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 23px rgba(37,99,235,0.25);
+}
+
+.timer-start svg {
+  width: 14px;
+  height: 14px;
+}
+
+.timer-reset {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dce6f2;
+  border-radius: 10px;
+  background: white;
+  color: #4d648b;
+  cursor: pointer;
+}
+
+.timer-reset:hover {
+  background: #f4f8ff;
+}
+
+.timer-reset svg {
+  width: 19px;
+  height: 19px;
+}

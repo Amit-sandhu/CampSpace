@@ -1,0 +1,421 @@
+/*
+ * BEGINNER GUIDE: src/apps/focus/components/focus/TodayTasks.css
+ * This file controls the visual design and layout for this part of CampSpace.
+ * Syllabus topics visible here: Flexbox, CSS Grid, Responsive design / media queries, CSS box model.
+ * Rules are kept unchanged; comments explain the major layout/responsive sections.
+ */
+
+/* =========================================================
+   TODAY'S TASKS
+   FINAL PRESENTATION UI
+   VISUAL ONLY — NO LOGIC CHANGES
+========================================================= */
+
+.tasks-card {
+  min-height: 380px;
+  padding: 20px;
+  background: rgba(255,255,255,0.87);
+  border: 1px solid rgba(255,255,255,0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(45,83,140,0.08);
+  backdrop-filter: blur(15px);
+}
+
+.tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.tasks-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tasks-title-icon {
+  width: 29px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1474ed;
+  flex-shrink: 0;
+}
+
+.tasks-title-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.tasks-title h2 {
+  margin: 0;
+  color: #10194d;
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.add-task-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 0 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#2563eb,#1593ff);
+  color: white;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 8px 17px rgba(37,99,235,0.20);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.add-task-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 11px 21px rgba(37,99,235,0.25);
+}
+
+.add-task-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.task-form {
+  display: grid;
+  grid-template-columns: 1fr 125px 60px 70px;
+  gap: 8px;
+  margin-bottom: 13px;
+  padding: 11px;
+  background: #f3f8fe;
+  border-radius: 11px;
+}
+
+.task-form input,
+.task-form select {
+  height: 35px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid #dce6f2;
+  border-radius: 7px;
+  background: white;
+  color: #304665;
+  font-size: 11px;
+  outline: none;
+}
+
+.task-form input:focus,
+.task-form select:focus {
+  border-color: #70a6ff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+
+.save-task,
+.cancel-task {
+  height: 35px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-task {
+  border: none;
+  color: white;
+  background: #2563eb;
+}
+
+.cancel-task {
+  border: 1px solid #dce6f2;
+  background: white;
+  color: #647693;
+}
+
+.task-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+
+.task-filter {
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid #dce6f2;
+  border-radius: 9px;
+  background: white;
+  color: #536b91;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.task-filter:hover {
+  transform: translateY(-1px);
+  background: #f5f9ff;
+}
+
+.task-filter.active {
+  color: white;
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: 0 5px 12px rgba(37,99,235,0.18);
+}
+
+.task-row {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 21px minmax(0,1fr) auto 22px;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid #e7eef6;
+}
+
+.task-row:last-child {
+  border-bottom: none;
+}
+
+.task-checkbox {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #2563eb;
+}
+
+.task-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1e3157;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.task-row.completed .task-name {
+  color: #8993a5;
+  text-decoration: line-through;
+}
+
+.task-type {
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.task-type.academic {
+  color: #176ce7;
+  background: #e5efff;
+}
+
+.task-type.study {
+  color: #069765;
+  background: #e1f8ee;
+}
+
+.task-type.project {
+  color: #7542dc;
+  background: #eee8ff;
+}
+
+.task-type.learning {
+  color: #7040dd;
+  background: #eee8ff;
+}
+
+.task-type.personal {
+  color: #e97900;
+  background: #fff0dc;
+}
+
+.delete-task {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #566b89;
+  font-size: 17px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.delete-task:hover {
+  background: #edf3fb;
+  color: #2563eb;
+}
+
+.delete-task svg {
+  width: 17px;
+  height: 17px;
+}
+
+.task-menu-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.task-menu {
+  position: absolute;
+  top: 29px;
+  right: 0;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  background: white;
+  border: 1px solid #dce6f2;
+  border-radius: 11px;
+  box-shadow: 0 16px 34px rgba(45,83,140,0.16);
+  z-index: 20;
+}
+
+.task-menu button {
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: #2a3c5e;
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-menu button:hover {
+  background: #f1f6ff;
+  color: #2563eb;
+}
+
+.task-menu-delete:hover {
+  background: #fdeeee !important;
+  color: #ed414b !important;
+}
+
+.task-row-editing {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 120px auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+  border-bottom: 1px solid #e7eef6;
+}
+
+.task-row-editing:last-child {
+  border-bottom: none;
+}
+
+.edit-title-input,
+.edit-type-select {
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid #70a6ff;
+  border-radius: 7px;
+  background: white;
+  color: #304665;
+  font-size: 11px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.edit-save-button,
+.edit-cancel-button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.edit-save-button {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-cancel-button {
+  background: #f1f5fb;
+  color: #647693;
+}
+
+.edit-save-button svg,
+.edit-cancel-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.empty-tasks {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8795aa;
+  font-size: 11px;
+}
+
+/* BEGINNER: Responsive layout section. These rules adapt the existing UI to smaller screens. */
+
+/* Mobile/tablet breakpoints are handled here without changing desktop behaviour. */
+
+/* Syllabus: responsive design + media queries + mobile-friendly layout. */
+
+@media (max-width:700px) {
+  .tasks-card {
+    padding: 17px;
+  }
+
+  .tasks-title h2 {
+    font-size: 18px;
+  }
+
+  .add-task-button {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 10px;
+  }
+
+  .task-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .task-row {
+    grid-template-columns: 20px minmax(0,1fr) auto 20px;
+  }
+
+  .task-name {
+    font-size: 12px;
+  }
+
+  .task-type {
+    font-size: 9px;
+    padding: 5px 9px;
+  }
+
+  .task-row-editing {
+    grid-template-columns: 1fr;
+  }
+}
