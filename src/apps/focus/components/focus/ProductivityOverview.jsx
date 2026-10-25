@@ -168,6 +168,22 @@ function ProductivityOverview({
       ? currentWeek
       : previousWeek;
 
+  // A presentation-friendly fallback keeps Previous Week useful when a new
+  // installation has no recorded sessions for that date range. These values
+  // are only shown in this chart; real session data is never changed or saved.
+  const previousWeekSampleMinutes = [45, 60, 35, 75, 50, 30, 40];
+
+  const hasPreviousWeekSessions =
+    useMemo(
+      () =>
+        previousWeek.some((day) =>
+          sessions.some((session) => session.date === day.date)
+        ),
+      [previousWeek, sessions]
+    );
+
+  const showPreviousWeekSampleData =
+    week === "Previous Week" && !hasPreviousWeekSessions;
 
   /* =====================================================
      GRAPH DATA
@@ -177,17 +193,20 @@ function ProductivityOverview({
     useMemo(() => {
 
       return selectedDays.map(
-        (day) => {
+        (day, index) => {
 
+          // Today's summary excludes seeded demo rows (recent: false). Keep historical
+          // seeded rows for the rest of the week, but don't inflate today's chart bar.
+          const isCurrentDay = day.date === getDateString(currentDate);
           const daySessions =
             sessions.filter(
               (session) =>
-                session.date ===
-                day.date
+                session.date === day.date &&
+                (!isCurrentDay || session.recent !== false)
             );
 
 
-          const minutes =
+          const recordedMinutes =
             daySessions.reduce(
               (
                 total,
@@ -200,6 +219,13 @@ function ProductivityOverview({
               0
             );
 
+          const minutes = showPreviousWeekSampleData
+            ? previousWeekSampleMinutes[index]
+            : recordedMinutes;
+
+          const sessionCount = showPreviousWeekSampleData
+            ? 1
+            : sessions.filter((session) => session.date === day.date).length;
 
           return {
 
@@ -211,6 +237,8 @@ function ProductivityOverview({
 
             minutes,
 
+            sessionCount,
+
             hours:
               minutes / 60
           };
@@ -220,7 +248,9 @@ function ProductivityOverview({
 
     }, [
       selectedDays,
-      sessions
+      sessions,
+      currentDate,
+      showPreviousWeekSampleData
     ]);
 
 
@@ -247,16 +277,7 @@ function ProductivityOverview({
 
   const totalSessions =
     graphData.reduce(
-      (
-        total,
-        day
-      ) =>
-        total +
-        sessions.filter(
-          (session) =>
-            session.date ===
-            day.date
-        ).length,
+      (total, day) => total + day.sessionCount,
       0
     );
 

@@ -1,31 +1,109 @@
 /*
  * BEGINNER GUIDE: src/pages/LoginPage.jsx
- * This React file defines the LoginPage component(s) and their visible UI.
- * Read the JSX below as HTML-like structure; JavaScript above/below it supplies the behaviour.
- * Syllabus topics are marked near the code that actually demonstrates them.
+ * The email + password form is a real React form:
+ *   - controlled inputs + validation + submit  -> useForm (src/hooks/useForm.js)
+ *   - validation rules                         -> src/lib/validators.js
+ *   - label + input + error markup             -> <FormField> (src/components/FormField.jsx)
+ * Local UI state (sign in / create account, show password, message) uses useState.
+ * The Google / Microsoft / GitHub buttons are still handled by src/lib/auth.js
+ * and src/lib/oauth.js; they show their messages through the bridge set up below.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './login.css'
+import FormField from '../components/FormField.jsx'
+import { useForm } from '../hooks/useForm.js'
+import { isEmail, minLength, required } from '../lib/validators.js'
 import { runAuthScript } from '../lib/auth.js'
 import { runOAuthScript } from '../lib/oauth.js'
 import '../lib/oauth-config.js'
 
+// VALIDATION STRATEGY: one schema = list of rules per field (same rules for both modes).
+const LOGIN_SCHEMA = {
+  email: [required('Enter your email address.'), isEmail('Enter a valid email address.')],
+  password: [required('Enter a password.'), minLength(4, 'Password must be at least 4 characters.')],
+}
+
+const INITIAL_VALUES = { email: '', password: '' }
+
 // BEGINNER: LoginPage()
-// This component/function is responsible for the LoginPage part of this feature.
-// It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
-// FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
+// Main job: show the sign-in / create-account card and handle the form with React state.
+// FEE topics: form handling, validation strategies, reusable input components, controlled components.
 export default function LoginPage() {
+  // LOCAL STATE: only this page needs these.
+  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  const [showPassword, setShowPassword] = useState(false)
+  const [message, setMessage] = useState({ text: '', isError: false })
+  const [redirecting, setRedirecting] = useState(false)
+
   useEffect(function () {
     document.body.className = ''
+
+    // Bridge: the legacy social sign-in code calls this to show its messages.
+    window.CampSpaceLoginMessage = function (text, isError) {
+      setMessage({ text: text, isError: Boolean(isError) })
+    }
 
     runAuthScript()
     runOAuthScript()
 
     return function () {
+      delete window.CampSpaceLoginMessage
       document.body.className = ''
     }
   }, [])
+
+  // Runs only after every field passed validation (see useForm.handleSubmit).
+  async function submitCredentials(values) {
+    const auth = window.CampSpaceAuth
+    const email = values.email.trim().toLowerCase()
+    const password = values.password
+    const users = auth.getUsers()
+
+    if (mode === 'signup') {
+      if (users[email]) {
+        setMessage({ text: 'An account with that email already exists \u2014 sign in instead.', isError: true })
+        return
+      }
+
+      const newUser = { email: email, password: password, name: auth.nameFromEmail(email) }
+      users[email] = newUser
+      auth.saveUsers(users)
+      auth.setSession(newUser)
+    } else {
+      const existingUser = users[email]
+      if (!existingUser || existingUser.password !== password) {
+        setMessage({ text: 'Incorrect email or password.', isError: true })
+        return
+      }
+      auth.setSession(existingUser)
+    }
+
+    setRedirecting(true)
+    setMessage({ text: 'Success \u2014 redirecting\u2026', isError: false })
+    window.setTimeout(function () {
+      window.location.href = '/?page=workspace'
+    }, 350)
+  }
+
+  const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
+    initialValues: INITIAL_VALUES,
+    schema: LOGIN_SCHEMA,
+    onSubmit: submitCredentials,
+  })
+
+  function toggleMode(event) {
+    event.preventDefault()
+    setMode(mode === 'signup' ? 'signin' : 'signup')
+    setMessage({ text: '', isError: false })
+  }
+
+  function showForgotMessage(event) {
+    event.preventDefault()
+    setMessage({ text: "Password reset isn't available in this preview yet.", isError: false })
+  }
+
+  const isSignup = mode === 'signup'
 
   return (
     <div className="login-page-root">
@@ -44,45 +122,88 @@ export default function LoginPage() {
 
         <img className="logo" src="/images/octopus.png" alt="CampSpace" />
 
-        <h1 id="login-heading">Welcome back</h1>
+        <h1 id="login-heading">{isSignup ? 'Create your account' : 'Welcome back'}</h1>
 
         <p className="subtitle" id="login-subtitle">
-          Sign in to continue to your workspace
+          {isSignup ? 'Set a password to start using CampSpace' : 'Sign in to continue to your workspace'}
         </p>
 
-        <label htmlFor="login-email">Email</label>
+        {/* FORM HANDLING: onSubmit runs validation first; noValidate lets our own messages show. */}
+        <form onSubmit={handleSubmit} noValidate>
+          <FormField id="login-email" label="Email" error={errors.email}>
+            <div className="input-box">
+              <i className="fa-regular fa-envelope"></i>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                placeholder="example@gmail.com"
+                autoComplete="email"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? 'login-email-error' : undefined}
+              />
+            </div>
+          </FormField>
 
-        <div className="input-box">
-          <i className="fa-regular fa-envelope"></i>
-          <input
-            type="email"
-            id="login-email"
-            placeholder="example@gmail.com"
-            autoComplete="email"
-          />
-        </div>
+          <FormField id="login-password" label="Password" error={errors.password}>
+            <div className="input-box">
+              <i className="fa-solid fa-lock"></i>
 
-        <label htmlFor="login-password">Password</label>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="login-password"
+                name="password"
+                placeholder="password"
+                autoComplete={isSignup ? 'new-password' : 'current-password'}
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? 'login-password-error' : undefined}
+              />
 
-        <div className="input-box">
-          <i className="fa-solid fa-lock"></i>
+              <i
+                className={showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'}
+                id="login-eye-toggle"
+                role="button"
+                tabIndex={0}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword(!showPassword)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    setShowPassword(!showPassword)
+                  }
+                }}
+              ></i>
+            </div>
+          </FormField>
 
-          <input
-            type="password"
-            id="login-password"
-            placeholder="password"
-            autoComplete="current-password"
-          />
+          <p
+            className={
+              'login-message' +
+              (message.text ? ' login-message--visible' : '') +
+              (message.isError ? ' login-message--error' : '')
+            }
+            id="login-message"
+            role="status"
+          >
+            {message.text}
+          </p>
 
-          <i className="fa-regular fa-eye" id="login-eye-toggle"></i>
-        </div>
-
-        <p className="login-message" id="login-message"></p>
-
-        <button className="login-btn" id="login-btn" type="button">
-          <span id="login-btn-label">Sign In</span>
-          <i className="fa-solid fa-arrow-right"></i>
-        </button>
+          <button
+            className="login-btn"
+            id="login-btn"
+            type="submit"
+            disabled={isSubmitting || redirecting}
+          >
+            <span id="login-btn-label">{isSignup ? 'Create account' : 'Sign In'}</span>
+            <i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
 
         <div className="divider">or continue with</div>
 
@@ -125,8 +246,10 @@ export default function LoginPage() {
         </div>
 
         <div className="footer-links">
-          <a href="#" id="login-forgot">Forgot password?</a>
-          <a href="#" id="login-toggle-mode">Create account →</a>
+          <a href="#" id="login-forgot" onClick={showForgotMessage}>Forgot password?</a>
+          <a href="#" id="login-toggle-mode" onClick={toggleMode}>
+            {isSignup ? 'Sign in instead \u2190' : 'Create account \u2192'}
+          </a>
         </div>
       </div>
     </div>

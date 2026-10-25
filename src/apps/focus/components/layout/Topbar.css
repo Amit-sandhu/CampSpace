@@ -137,3 +137,46 @@
   font-size: 0.68rem;
   color: #9ca3af;
 }
+
+/* Focus-only notification summary opened by the topbar bell. */
+.topbar-notifications-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.topbar-notifications-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 250;
+  width: 260px;
+  max-width: calc(100vw - 32px);
+  padding: 15px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 14px;
+  background: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.16);
+}
+
+.topbar-notifications-popover strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #10234d;
+  font-size: 13px;
+}
+
+.topbar-notifications-popover p {
+  margin: 5px 0 0;
+  color: #52627a;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  .topbar-notifications-popover {
+    right: -10px;
+  }
+}
+

@@ -5,7 +5,7 @@
  * Syllabus topics are marked near the code that actually demonstrates them.
  */
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import {
   ClockIcon,
@@ -17,6 +17,7 @@ import {
   CheckIcon
 } from "../common/Icons";
 
+import FocusDashboardContext from "./FocusDashboardContext";
 import "./RecentSessions.css";
 
 
@@ -77,9 +78,10 @@ function getSessionIcon(task, type) {
 // This component/function is responsible for the RecentSessions part of this feature.
 // It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
 // FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function RecentSessions({
-  sessions = []
-}) {
+function RecentSessions() {
+  // CONTEXT: today's sessions come from FocusPage via context (was: a "sessions" prop).
+  const { todaySessions: sessions = [] } =
+    useContext(FocusDashboardContext);
 
   const [showAll, setShowAll] =
     useState(false);

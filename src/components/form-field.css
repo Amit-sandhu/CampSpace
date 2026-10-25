@@ -1,0 +1,14 @@
+/* Styles for the reusable FormField wrapper. The label itself keeps the
+   look of the page it is used on (e.g. the login card), only errors are added. */
+.form-field-error {
+  margin: 6px 4px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d9384a;
+  position: relative;
+  z-index: 1;
+}
+
+.form-field--invalid .input-box {
+  border-color: #d9384a;
+}

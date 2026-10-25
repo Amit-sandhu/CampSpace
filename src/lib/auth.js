@@ -175,21 +175,23 @@ function runAuthScript() {
 
   if (emailInput && passwordInput) {
     var loginBtn = document.getElementById('login-btn');
-    var loginBtnLabel = document.getElementById('login-btn-label');
     var messageEl = document.getElementById('login-message');
-    var toggleLink = document.getElementById('login-toggle-mode');
-    var forgotLink = document.getElementById('login-forgot');
-    var eyeIcon = document.getElementById('login-eye-toggle');
-    var heading = document.getElementById('login-heading');
-    var subtitle = document.getElementById('login-subtitle');
 
-    var mode = 'signin'; // can be 'signin' or 'signup'
+    // NOTE: the email/password form (sign in / create account, validation, show-hide
+    // password, forgot link) is now a React form in src/pages/LoginPage.jsx.
+    // This script only keeps the social sign-in buttons (Google / Microsoft / GitHub).
 
     // BEGINNER: showMessage()
     // Main job: perform one focused task for this file.
     // It receives data/props, performs the required work, and returns the result or UI.
     // Keeping this job in one function makes the code easier to follow during the PPT.
     function showMessage(text, isError) {
+      // The React login page owns the message area; hand the text to it.
+      if (window.CampSpaceLoginMessage) {
+        window.CampSpaceLoginMessage(text, isError);
+        return;
+      }
+
       if (!messageEl) {
         return;
       }
@@ -207,78 +209,6 @@ function runAuthScript() {
       } else {
         messageEl.classList.remove('login-message--visible');
       }
-    }
-
-    // BEGINNER: setMode()
-    // Main job: perform one focused task for this file.
-    // It receives data/props, performs the required work, and returns the result or UI.
-    // Keeping this job in one function makes the code easier to follow during the PPT.
-    function setMode(nextMode) {
-      mode = nextMode;
-
-      if (mode === 'signup') {
-        if (heading) {
-          heading.textContent = 'Create your account';
-        }
-        if (subtitle) {
-          subtitle.textContent = 'Set a password to start using CampSpace';
-        }
-        if (loginBtnLabel) {
-          loginBtnLabel.textContent = 'Create account';
-        }
-        if (toggleLink) {
-          toggleLink.textContent = 'Sign in instead \u2190';
-        }
-      } else {
-        if (heading) {
-          heading.textContent = 'Welcome back';
-        }
-        if (subtitle) {
-          subtitle.textContent = 'Sign in to continue to your workspace';
-        }
-        if (loginBtnLabel) {
-          loginBtnLabel.textContent = 'Sign In';
-        }
-        if (toggleLink) {
-          toggleLink.textContent = 'Create account \u2192';
-        }
-      }
-
-      showMessage('', false);
-    }
-
-    if (toggleLink) {
-      toggleLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        if (mode === 'signup') {
-          setMode('signin');
-        } else {
-          setMode('signup');
-        }
-      });
-    }
-
-    if (forgotLink) {
-      forgotLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showMessage("Password reset isn't available in this preview yet.", false);
-      });
-    }
-
-    if (eyeIcon) {
-      eyeIcon.addEventListener('click', function () {
-        var showingPassword = passwordInput.type === 'password';
-
-        if (showingPassword) {
-          passwordInput.type = 'text';
-          eyeIcon.classList.remove('fa-eye');
-          eyeIcon.classList.add('fa-eye-slash');
-        } else {
-          passwordInput.type = 'password';
-          eyeIcon.classList.add('fa-eye');
-          eyeIcon.classList.remove('fa-eye-slash');
-        }
-      });
     }
 
     /* -------------------------------------------------------
@@ -467,83 +397,6 @@ function runAuthScript() {
         window.location.href = '/?page=workspace';
       }, 350);
     }
-
-    // BEGINNER: handleSubmit()
-    // Main job: perform one focused task for this file.
-    // It receives data/props, performs the required work, and returns the result or UI.
-    // Keeping this job in one function makes the code easier to follow during the PPT.
-    function handleSubmit() {
-      var email = emailInput.value.trim().toLowerCase();
-      var password = passwordInput.value;
-
-      if (!email || !password) {
-        showMessage('Enter both an email and a password.', true);
-        return;
-      }
-
-      // This checks the email looks like "something@something.something"
-      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        showMessage('Enter a valid email address.', true);
-        return;
-      }
-
-      if (password.length < 4) {
-        showMessage('Password must be at least 4 characters.', true);
-        return;
-      }
-
-      var users = getUsers();
-
-      if (mode === 'signup') {
-        if (users[email]) {
-          showMessage('An account with that email already exists \u2014 sign in instead.', true);
-          return;
-        }
-
-        var newUser = {
-          email: email,
-          password: password,
-          name: nameFromEmail(email)
-        };
-
-        users[email] = newUser;
-        saveUsers(users);
-        setSession(newUser);
-        redirectToDashboard();
-        return;
-      }
-
-      var existingUser = users[email];
-      if (!existingUser || existingUser.password !== password) {
-        showMessage('Incorrect email or password.', true);
-        return;
-      }
-
-      setSession(existingUser);
-      redirectToDashboard();
-    }
-
-    if (loginBtn) {
-      loginBtn.addEventListener('click', function (event) {
-        event.preventDefault();
-        handleSubmit();
-      });
-    }
-
-    passwordInput.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        handleSubmit();
-      }
-    });
-
-    emailInput.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        passwordInput.focus();
-      }
-    });
   }
 
   /* ============================================================

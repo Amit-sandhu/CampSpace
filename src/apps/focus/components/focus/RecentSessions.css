@@ -98,9 +98,9 @@
 .session-row {
   min-height: 58px;
   display: grid;
-  grid-template-columns: 40px minmax(0,1fr) 56px 84px;
+  grid-template-columns: 36px minmax(0,1fr) 54px 72px;
   align-items: center;
-  column-gap: 9px;
+  column-gap: 7px;
   border-bottom: 1px solid #e8eef6;
   transition: background 0.2s ease;
 }
@@ -162,9 +162,11 @@
 }
 
 .session-details strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
   color: #172b52;
   font-size: 13px;
   line-height: 1.2;

@@ -6,6 +6,13 @@
  */
 
 import { useEffect, useMemo, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  chatDeleted,
+  chatSelected,
+  chatStarted,
+  sendChatMessage
+} from "../../store/chatStore.js";
 import "./CamiAI.css";
 
 const WELCOME_MESSAGES = [
@@ -17,8 +24,6 @@ const WELCOME_MESSAGES = [
   "Welcome back. Pick a problem and let’s solve it together."
 ];
 
-const SESSIONS_STORAGE_KEY = "campspace-aichat-sessions";
-const MAX_HISTORY = 60;
 const GEMINI_MODEL = "gemini-3.8-flash";
 
 // BEGINNER: getApiKey()
@@ -33,33 +38,6 @@ function getApiKey() {
   const key = config.apiKey || "";
   if (!key || key === "GEMINI_API_KEY") return "";
   return key;
-}
-
-// BEGINNER: getStoredSessions()
-// This component/function is responsible for the getStoredSessions part of this feature.
-// It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
-// FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function getStoredSessions() {
-  try {
-    const stored = localStorage.getItem(SESSIONS_STORAGE_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-// BEGINNER: saveStoredSessions()
-// This component/function is responsible for the saveStoredSessions part of this feature.
-// It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
-// FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function saveStoredSessions(sessions) {
-  try {
-    localStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
-  } catch {
-    // Keep app functional if localStorage fails
-  }
 }
 
 // Timer Formatter: Converts seconds into "1s", "45s", "1m 5s", etc.
@@ -99,56 +77,6 @@ function renderMarkdown(markdown) {
   return safe;
 }
 
-async function callGemini(apiKey, history) {
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/" +
-    GEMINI_MODEL +
-    ":generateContent?key=" +
-    encodeURIComponent(apiKey);
-
-  const contents = history
-    .filter((message) => message.role === "user" || message.role === "model")
-    .map((message) => ({
-      role: message.role,
-      parts: [{ text: message.text }]
-    }));
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents,
-      generationConfig: {
-        maxOutputTokens: 250
-      }
-    })
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      (data && data.error && data.error.message) ||
-        "The AI request failed. Check the API key."
-    );
-  }
-
-  const parts =
-    data &&
-    data.candidates &&
-    data.candidates[0] &&
-    data.candidates[0].content &&
-    data.candidates[0].content.parts;
-
-  const text = parts ? parts.map((part) => part.text || "").join("") : "";
-
-  if (!text) {
-    throw new Error("No response was returned. Try rephrasing your message.");
-  }
-
-  return text;
-}
-
 // BEGINNER: CamiAI()
 // This component/function is responsible for the CamiAI part of this feature.
 // It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
@@ -159,15 +87,25 @@ export default function CamiAI() {
     []
   );
 
-  const [sessions, setSessions] = useState(getStoredSessions);
-  const [currentSessionId, setCurrentSessionId] = useState(null);
-  const [history, setHistory] = useState([]);
+  // GLOBAL STATE (Redux Toolkit): chat sessions, the open conversation and the
+  // loading/error status of the AI request live in src/store/chatStore.js.
+  const dispatch = useDispatch();
+  const { sessions, currentSessionId, history, status } = useSelector(
+    (state) => state.chat
+  );
+  const isSending = status === "loading";
+
+  // LOCAL STATE (useState): only this screen cares about these.
   const [input, setInput] = useState("");
-  const [isSending, setIsSending] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [elapsedTime, setElapsedTime] = useState(0);
 
   const messagesEndRef = useRef(null);
+
+  // Opening the Cami page always starts on a fresh chat.
+  useEffect(() => {
+    dispatch(chatStarted());
+  }, [dispatch]);
 
   // Timer interval hook triggered when isSending changes
   useEffect(() => {
@@ -186,23 +124,6 @@ export default function CamiAI() {
     };
   }, [isSending]);
 
-  // Load history when current session ID changes
-  useEffect(() => {
-    if (!currentSessionId) {
-      setHistory([]);
-      return;
-    }
-    const current = sessions.find((s) => s.id === currentSessionId);
-    if (current) {
-      setHistory(current.messages || []);
-    }
-  }, [currentSessionId]);
-
-  // Persist sessions whenever they update
-  useEffect(() => {
-    saveStoredSessions(sessions);
-  }, [sessions]);
-
   // Scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -213,13 +134,12 @@ export default function CamiAI() {
   // It receives data/props, performs the required work, and returns the result or UI.
   // Keeping this job in one function makes the code easier to follow during the PPT.
   const startNewChat = () => {
-    setCurrentSessionId(null);
-    setHistory([]);
+    dispatch(chatStarted());
     setInput("");
   };
 
   const selectSession = (id) => {
-    setCurrentSessionId(id);
+    dispatch(chatSelected(id));
   };
 
   // BEGINNER: deleteSession()
@@ -228,86 +148,19 @@ export default function CamiAI() {
   // Keeping this job in one function makes the code easier to follow during the PPT.
   const deleteSession = (id, e) => {
     e.stopPropagation();
-    const updated = sessions.filter((s) => s.id !== id);
-    setSessions(updated);
-    if (currentSessionId === id) {
-      startNewChat();
-    }
+    dispatch(chatDeleted(id));
+    if (currentSessionId === id) setInput("");
   };
 
-  async function sendMessage() {
+  // Dispatching the async thunk starts the request; the store moves
+  // status idle -> loading -> succeeded/failed and adds the reply or error.
+  function sendMessage() {
     if (isSending || !input.trim()) return;
 
-    const text = input.trim();
-    const apiKey = getApiKey();
-    const nextHistory = [...history, { role: "user", text }];
-
-    let activeSessionId = currentSessionId;
-
-    if (!activeSessionId) {
-      activeSessionId = Date.now().toString();
-      const newSession = {
-        id: activeSessionId,
-        title: text.length > 28 ? text.slice(0, 28) + "..." : text,
-        messages: nextHistory
-      };
-      setSessions([newSession, ...sessions]);
-      setCurrentSessionId(activeSessionId);
-    } else {
-      setSessions(
-        sessions.map((s) =>
-          s.id === activeSessionId ? { ...s, messages: nextHistory } : s
-        )
-      );
-    }
-
+    dispatch(
+      sendChatMessage({ text: input.trim(), apiKey: getApiKey(), model: GEMINI_MODEL })
+    );
     setInput("");
-    setHistory(nextHistory);
-
-    if (!apiKey) {
-      const errorHistory = [
-        ...nextHistory,
-        { role: "error", text: "Cami isn’t set up yet :(" }
-      ];
-      setHistory(errorHistory);
-      setSessions(
-        sessions.map((s) =>
-          s.id === activeSessionId ? { ...s, messages: errorHistory } : s
-        )
-      );
-      return;
-    }
-
-    setIsSending(true);
-
-    try {
-      const reply = await callGemini(apiKey, nextHistory);
-      const finalHistory = [
-        ...nextHistory,
-        { role: "model", text: reply }
-      ].slice(-MAX_HISTORY);
-
-      setHistory(finalHistory);
-      setSessions((prevSessions) =>
-        prevSessions.map((s) =>
-          s.id === activeSessionId ? { ...s, messages: finalHistory } : s
-        )
-      );
-    } catch (error) {
-      const errorHistory = [
-        ...nextHistory,
-        { role: "error", text: error.message }
-      ].slice(-MAX_HISTORY);
-
-      setHistory(errorHistory);
-      setSessions((prevSessions) =>
-        prevSessions.map((s) =>
-          s.id === activeSessionId ? { ...s, messages: errorHistory } : s
-        )
-      );
-    } finally {
-      setIsSending(false);
-    }
   }
 
   return (

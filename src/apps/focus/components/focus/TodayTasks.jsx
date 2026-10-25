@@ -1,11 +1,15 @@
 /*
- * BEGINNER GUIDE: src/apps/focus/components/focus/TodayTasks.jsx
- * This React file defines the TodayTasks component(s) and their visible UI.
- * Read the JSX below as HTML-like structure; JavaScript above/below it supplies the behaviour.
- * Syllabus topics are marked near the code that actually demonstrates them.
+ * CHANGED in this file (what + why):
+ *  - Add / edit now uses ONE modal form (was: separate inline add form + inline edit row)
+ *  - FORM HANDLING: controlled inputs (form state) + onSubmit with preventDefault
+ *  - VALIDATION: required, 3-100 characters, no duplicate titles -> errors shown per field
+ *  - REUSABLE INPUT: <TaskFormField> wraps label + input + error message
+ *  - GLOBAL STATE: search / filter / sort / toast live in the Redux Toolkit store (focusUiStore)
+ *  - CONTEXT: tasks + setTasks come from FocusDashboardContext instead of props
+ *  - Search is debounced (waits 250 ms after typing stops) before filtering
  */
-
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   ClipboardListIcon,
@@ -13,639 +17,386 @@ import {
   MoreVerticalIcon,
   CheckIcon
 } from "../common/Icons";
+import TaskFormField from "./TaskFormField";
+import FocusDashboardContext from "./FocusDashboardContext";
+import {
+  clearToast as clearToastAction,
+  setCategoryFilter as setCategoryFilterAction,
+  setSearchTerm as setSearchTermAction,
+  setSortBy as setSortByAction,
+  setStatusFilter as setStatusFilterAction,
+  showToast as showToastAction
+} from "./focusUiStore";
 
 import "./TodayTasks.css";
 
+const taskTypes = ["Academic", "Study", "Project", "Learning", "Personal"];
 
-const taskTypes = [
-  "Academic",
-  "Study",
-  "Project",
-  "Learning",
-  "Personal"
-];
+function getTaskTime(task) {
+  if (task.createdAt) {
+    const parsed = new Date(task.createdAt).getTime();
+    if (Number.isFinite(parsed)) return parsed;
+  }
 
+  const numericId = Number(task.id);
+  return Number.isFinite(numericId) ? numericId : 0;
+}
 
-// BEGINNER: TodayTasks()
-// This component/function is responsible for the TodayTasks part of this feature.
-// It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
-// FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function TodayTasks({
-  tasks,
-  setTasks
-}) {
+function TodayTasks() {
+  const { tasks, setTasks } = useContext(FocusDashboardContext);
+  const dispatch = useDispatch();
+  const { searchTerm, statusFilter, categoryFilter, sortBy, toastMessage } =
+    useSelector((state) => state.focusUi);
 
-  const [filter, setFilter] =
-    useState("All");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+  const [showModal, setShowModal] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [form, setForm] = useState({ title: "", type: "Academic" });
+  const [formErrors, setFormErrors] = useState({});
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const cardRef = useRef(null);
+  const titleInputRef = useRef(null);
+  const completedCount = tasks.filter((task) => task.completed).length;
+  const pendingCount = tasks.length - completedCount;
 
-  const [showForm, setShowForm] =
-    useState(false);
+  // Debounce the search input so filtering waits until typing pauses.
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim().toLowerCase());
+    }, 250);
 
-  const [taskName, setTaskName] =
-    useState("");
+    return () => window.clearTimeout(timeoutId);
+  }, [searchTerm]);
 
-  const [taskType, setTaskType] =
-    useState("Academic");
-
-
-  // Tracks which task's "⋮" menu is currently open (only one at a time)
-  const [openMenuId, setOpenMenuId] =
-    useState(null);
-
-  // Tracks which task is currently being edited, and the draft values
-  const [editingTaskId, setEditingTaskId] =
-    useState(null);
-
-  const [editTitle, setEditTitle] =
-    useState("");
-
-  const [editType, setEditType] =
-    useState("Academic");
-
-
-  const cardRef =
-    useRef(null);
-
-  const taskInputRef =
-    useRef(null);
-
-
-  /* =======================================================
-     DOM MANIPULATION
-     Focus the task input when the add form opens.
-  ======================================================= */
+  // Keep the modal keyboard-friendly and focus the title field when it opens.
+  useEffect(() => {
+    if (showModal) titleInputRef.current?.focus();
+  }, [showModal]);
 
   useEffect(() => {
-    if (showForm && taskInputRef.current) {
-      taskInputRef.current.focus();
-    }
-  }, [showForm]);
-
-
-  /* =======================================================
-     CLOSE MENU WHEN CLICKING OUTSIDE THE CARD
-  ======================================================= */
+    if (!toastMessage) return undefined;
+    const timeoutId = window.setTimeout(() => dispatch(clearToastAction()), 3000);
+    return () => window.clearTimeout(timeoutId);
+  }, [toastMessage, dispatch]);
 
   useEffect(() => {
-
-    // BEGINNER: handleClickOutside()
-    // Main job: perform one focused task for this file.
-    // It receives data/props, performs the required work, and returns the result or UI.
-    // Keeping this job in one function makes the code easier to follow during the PPT.
-    function handleClickOutside(event) {
-
-      if (
-        cardRef.current &&
-        !cardRef.current.contains(event.target)
-      ) {
+    function handleOutsideClick(event) {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
         setOpenMenuId(null);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-
-  const completedCount =
-    tasks.filter(
-      (task) =>
-        task.completed
-    ).length;
-
-
-  const pendingCount =
-    tasks.length -
-    completedCount;
-
-
-  const filteredTasks =
-    tasks.filter(
-      (task) => {
-
-        if (
-          filter === "Pending"
-        ) {
-          return !task.completed;
-        }
-
-        if (
-          filter === "Completed"
-        ) {
-          return task.completed;
-        }
-
-        return true;
+  useEffect(() => {
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setShowModal(false);
+        setOpenMenuId(null);
       }
-    );
-
-
-  // BEGINNER: handleAddTask()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function handleAddTask(event) {
-
-    event.preventDefault();
-
-    if (
-      taskName.trim() === ""
-    ) {
-      return;
     }
 
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
 
-    const newTask = {
+  const filteredTasks = useMemo(() => {
+    const result = tasks.filter((task) => {
+      const title = String(task.title || "").toLowerCase();
+      const matchesSearch = title.includes(debouncedSearch);
+      const matchesStatus =
+        statusFilter === "All" ||
+        (statusFilter === "Pending" && !task.completed) ||
+        (statusFilter === "Completed" && task.completed);
+      const matchesCategory =
+        categoryFilter === "All" || task.type === categoryFilter;
 
-      id:
-        Date.now(),
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
 
-      title:
-        taskName.trim(),
+    result.sort((a, b) => {
+      if (sortBy === "title-asc") {
+        return String(a.title || "").localeCompare(String(b.title || ""));
+      }
+      if (sortBy === "title-desc") {
+        return String(b.title || "").localeCompare(String(a.title || ""));
+      }
+      if (sortBy === "oldest") return getTaskTime(a) - getTaskTime(b);
+      return getTaskTime(b) - getTaskTime(a);
+    });
 
-      type:
-        taskType,
+    return result;
+  }, [tasks, debouncedSearch, statusFilter, categoryFilter, sortBy]);
 
-      completed:
-        false
-    };
-
-
-    setTasks(
-      (previousTasks) => [
-        ...previousTasks,
-        newTask
-      ]
-    );
-
-
-    setTaskName("");
-
-    setTaskType(
-      "Academic"
-    );
-
-    setShowForm(false);
+  function openAddModal() {
+    setEditingTaskId(null);
+    setForm({ title: "", type: "Academic" });
+    setFormErrors({});
+    setShowModal(true);
   }
 
-
-  // BEGINNER: handleToggleTask()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function handleToggleTask(
-    taskId
-  ) {
-
-    setTasks(
-      (previousTasks) =>
-        previousTasks.map(
-          (task) => {
-
-            if (
-              task.id === taskId
-            ) {
-
-              return {
-                ...task,
-                completed:
-                  !task.completed
-              };
-            }
-
-            return task;
-          }
-        )
-    );
-  }
-
-
-  // BEGINNER: handleDeleteTask()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function handleDeleteTask(
-    taskId
-  ) {
-
-    setTasks(
-      (previousTasks) =>
-        previousTasks.filter(
-          (task) =>
-            task.id !== taskId
-        )
-    );
-
-    setOpenMenuId(null);
-  }
-
-
-  /* =======================================================
-     EDIT TASK
-  ======================================================= */
-
-  // BEGINNER: handleToggleMenu()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function handleToggleMenu(taskId) {
-
-    setOpenMenuId(
-      (previousId) =>
-        previousId === taskId ? null : taskId
-    );
-  }
-
-
-  function handleStartEdit(task) {
-
+  function openEditModal(task) {
     setEditingTaskId(task.id);
-    setEditTitle(task.title);
-    setEditType(task.type);
+    setForm({ title: task.title || "", type: task.type || "Academic" });
+    setFormErrors({});
     setOpenMenuId(null);
+    setShowModal(true);
   }
 
-
-  // BEGINNER: handleCancelEdit()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function handleCancelEdit() {
+  function closeModal() {
+    setShowModal(false);
     setEditingTaskId(null);
+    setFormErrors({});
   }
 
+  function validateForm() {
+    const errors = {};
+    const cleanTitle = form.title.trim();
 
-  function handleSaveEdit(event, taskId) {
-
-    event.preventDefault();
-
-    if (editTitle.trim() === "") {
-      return;
+    if (!cleanTitle) {
+      errors.title = "Task title is required.";
+    } else if (cleanTitle.length < 3) {
+      errors.title = "Enter at least 3 characters.";
+    } else if (cleanTitle.length > 100) {
+      errors.title = "Use 100 characters or fewer.";
     }
 
-    setTasks(
-      (previousTasks) =>
-        previousTasks.map(
-          (task) =>
-            task.id === taskId
-              ? { ...task, title: editTitle.trim(), type: editType }
-              : task
-        )
+    const duplicate = tasks.some(
+      (task) =>
+        task.id !== editingTaskId &&
+        String(task.title || "").trim().toLowerCase() === cleanTitle.toLowerCase()
     );
 
-    setEditingTaskId(null);
+    if (cleanTitle && duplicate) {
+      errors.title = "A task with this title already exists.";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    if (!validateForm()) return;
+
+    const cleanTitle = form.title.trim();
+
+    if (editingTaskId !== null) {
+      setTasks((previousTasks) =>
+        previousTasks.map((task) =>
+          task.id === editingTaskId
+            ? { ...task, title: cleanTitle, type: form.type }
+            : task
+        )
+      );
+      dispatch(showToastAction("Task updated successfully."));
+    } else {
+      const newTask = {
+        id: Date.now(),
+        title: cleanTitle,
+        type: form.type,
+        completed: false,
+        createdAt: new Date().toISOString()
+      };
+      setTasks((previousTasks) => [...previousTasks, newTask]);
+      dispatch(showToastAction("Task added successfully."));
+      dispatch(setSearchTermAction(""));
+      dispatch(setStatusFilterAction("All"));
+      dispatch(setCategoryFilterAction("All"));
+      dispatch(setSortByAction("newest"));
+    }
+
+    closeModal();
+  }
+
+  function handleToggleTask(taskId) {
+    setTasks((previousTasks) =>
+      previousTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+
+    const task = tasks.find((item) => item.id === taskId);
+    dispatch(showToastAction(task?.completed ? "Task marked as pending." : "Task completed."));
+  }
+
+  function handleDeleteTask(taskId) {
+    const task = tasks.find((item) => item.id === taskId);
+    setTasks((previousTasks) => previousTasks.filter((item) => item.id !== taskId));
+    setOpenMenuId(null);
+    dispatch(showToastAction(`Deleted “${task?.title || "task"}”.`));
+  }
+
+  function handleModalBackdrop(event) {
+    if (event.target === event.currentTarget) closeModal();
+  }
 
   return (
     <section className="tasks-card" ref={cardRef}>
-      {/* Semantic section that groups related content into one feature area. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-
       <div className="tasks-header">
-        {/* Task-management area where tasks can be created, filtered, edited, and completed. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         <div className="tasks-title">
-          {/* Task-management area where tasks can be created, filtered, edited, and completed. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-          <span className="tasks-title-icon">
-            <ClipboardListIcon />
-          </span>
-
-          <h2>
-            Today's Tasks
-          </h2>
-
+          <span className="tasks-title-icon"><ClipboardListIcon /></span>
+          <h2>Today's Tasks</h2>
         </div>
 
-
-        <button
-          className="add-task-button"
-          type="button"
-          onClick={() =>
-            setShowForm(
-              !showForm
-            )
-          }
-        >
+        <button className="add-task-button" type="button" onClick={openAddModal}>
           <PlusIcon />
           <span>Add Task</span>
         </button>
-
       </div>
 
-
-      {showForm && (
-
-        <form
-          className="task-form"
-          onSubmit={
-            handleAddTask
-          }
-        >
-
-          <label className="sr-only" htmlFor="task-name-input">
-            Task name
-          </label>
-
+      <div className="task-toolbar">
+        <label className="task-search">
+          <span className="sr-only">Search tasks</span>
           <input
-            id="task-name-input"
-            ref={taskInputRef}
-            type="text"
-            placeholder="Enter task name"
-            value={taskName}
-            onChange={(event) =>
-              setTaskName(
-                event.target.value
-              )
-            }
+            type="search"
+            value={searchTerm}
+            onChange={(event) => dispatch(setSearchTermAction(event.target.value))}
+            placeholder="Search tasks..."
+            aria-label="Search tasks"
           />
+        </label>
 
-
-          <label className="sr-only" htmlFor="task-type-select">
-            Task type
-          </label>
-
+        <label className="task-control">
+          <span className="sr-only">Filter by category</span>
           <select
-            id="task-type-select"
-            value={taskType}
-            onChange={(event) =>
-              setTaskType(
-                event.target.value
-              )
-            }
+            value={categoryFilter}
+            onChange={(event) => dispatch(setCategoryFilterAction(event.target.value))}
+            aria-label="Filter tasks by category"
           >
-
-            {taskTypes.map(
-              (type) => (
-
-                <option
-                  key={type}
-                  value={type}
-                >
-                  {type}
-                </option>
-
-              )
-            )}
-
+            <option value="All">All categories</option>
+            {taskTypes.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
+        </label>
 
-
-          <button
-            type="submit"
-            className="save-task"
+        <label className="task-control task-sort">
+          <span className="sr-only">Sort tasks</span>
+          <select
+            value={sortBy}
+            onChange={(event) => dispatch(setSortByAction(event.target.value))}
+            aria-label="Sort tasks"
           >
-            Add
-          </button>
-
-
-          <button
-            type="button"
-            className="cancel-task"
-            onClick={() =>
-              setShowForm(false)
-            }
-          >
-            Cancel
-          </button>
-
-        </form>
-      )}
-
-
-      <div className="task-filters">
-        {/* Filter buttons that change which tasks are shown. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-        <button
-          className={
-            filter === "All"
-              ? "task-filter active"
-              : "task-filter"
-          }
-          onClick={() =>
-            setFilter("All")
-          }
-        >
-          All ({tasks.length})
-        </button>
-
-
-        <button
-          className={
-            filter === "Pending"
-              ? "task-filter active"
-              : "task-filter"
-          }
-          onClick={() =>
-            setFilter("Pending")
-          }
-        >
-          Pending ({pendingCount})
-        </button>
-
-
-        <button
-          className={
-            filter === "Completed"
-              ? "task-filter active"
-              : "task-filter"
-          }
-          onClick={() =>
-            setFilter("Completed")
-          }
-        >
-          Completed ({completedCount})
-        </button>
-
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title-asc">Title A–Z</option>
+            <option value="title-desc">Title Z–A</option>
+          </select>
+        </label>
       </div>
 
+      <div className="task-filters" role="tablist" aria-label="Task status filters">
+        <button type="button" role="tab" aria-selected={statusFilter === "All"}
+          className={statusFilter === "All" ? "task-filter active" : "task-filter"}
+          onClick={() => dispatch(setStatusFilterAction("All"))}>All ({tasks.length})</button>
+        <button type="button" role="tab" aria-selected={statusFilter === "Pending"}
+          className={statusFilter === "Pending" ? "task-filter active" : "task-filter"}
+          onClick={() => dispatch(setStatusFilterAction("Pending"))}>Pending ({pendingCount})</button>
+        <button type="button" role="tab" aria-selected={statusFilter === "Completed"}
+          className={statusFilter === "Completed" ? "task-filter active" : "task-filter"}
+          onClick={() => dispatch(setStatusFilterAction("Completed"))}>Completed ({completedCount})</button>
+      </div>
 
       <div className="task-list">
-        {/* List that renders the current tasks from react state. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         {filteredTasks.length === 0 ? (
-
           <div className="empty-tasks">
-            {/* Task-management area where tasks can be created, filtered, edited, and completed. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-            No tasks in this category.
+            {tasks.length === 0
+              ? "No tasks yet. Add your first task."
+              : "No tasks match your search or filters."}
           </div>
+        ) : filteredTasks.map((task) => (
+          <div className={task.completed ? "task-row completed" : "task-row"} key={task.id}>
+            <input
+              className="task-checkbox"
+              type="checkbox"
+              checked={Boolean(task.completed)}
+              onChange={() => handleToggleTask(task.id)}
+              aria-label={`${task.completed ? "Mark pending" : "Complete"}: ${task.title}`}
+            />
 
-        ) : (
+            <span className="task-name" title={task.title}>{task.title}</span>
 
-          filteredTasks.map(
-            (task) => {
+            <span className={`task-type ${String(task.type || "Study").toLowerCase()}`}>
+              {task.type || "Study"}
+            </span>
 
-              const isEditing =
-                editingTaskId === task.id;
+            <div className="task-menu-wrapper">
+              <button className="delete-task" type="button"
+                onClick={() => setOpenMenuId((previous) => previous === task.id ? null : task.id)}
+                aria-label={`Options for ${task.title}`} aria-expanded={openMenuId === task.id}>
+                <MoreVerticalIcon />
+              </button>
 
-
-              if (isEditing) {
-
-                return (
-
-                  <form
-                    className="task-row task-row-editing"
-                    key={task.id}
-                    onSubmit={(event) =>
-                      handleSaveEdit(event, task.id)
-                    }
-                  >
-
-                    <input
-                      className="edit-title-input"
-                      type="text"
-                      value={editTitle}
-                      onChange={(event) =>
-                        setEditTitle(event.target.value)
-                      }
-                      autoFocus
-                    />
-
-                    <select
-                      className="edit-type-select"
-                      value={editType}
-                      onChange={(event) =>
-                        setEditType(event.target.value)
-                      }
-                    >
-
-                      {taskTypes.map(
-                        (type) => (
-
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-
-                        )
-                      )}
-
-                    </select>
-
-                    <div className="edit-actions">
-                      {/* Action buttons that open related campspace applications. — FEE topics: JSX + semantic HTML; className connects this structure to the CSS styling. */}
-
-                      <button
-                        type="submit"
-                        className="edit-save-button"
-                        aria-label="Save changes"
-                      >
-                        <CheckIcon />
-                      </button>
-
-                      <button
-                        type="button"
-                        className="edit-cancel-button"
-                        onClick={handleCancelEdit}
-                        aria-label="Cancel editing"
-                      >
-                        ×
-                      </button>
-
-                    </div>
-
-                  </form>
-
-                );
-              }
-
-
-              return (
-
-                <div
-                  className={
-                    task.completed
-                      ? "task-row completed"
-                      : "task-row"
-                  }
-                  key={task.id}
-                >
-
-                  <input
-                    className="task-checkbox"
-                    type="checkbox"
-                    checked={
-                      task.completed
-                    }
-                    onChange={() =>
-                      handleToggleTask(
-                        task.id
-                      )
-                    }
-                  />
-
-
-                  <span className="task-name">
-                    {task.title}
-                  </span>
-
-
-                  <span
-                    className={
-                      `task-type ${
-                        task.type.toLowerCase()
-                      }`
-                    }
-                  >
-                    {task.type}
-                  </span>
-
-
-                  <div className="task-menu-wrapper">
-
-                    <button
-                      className="delete-task"
-                      type="button"
-                      onClick={() =>
-                        handleToggleMenu(task.id)
-                      }
-                      aria-label={
-                        `Options for ${task.title}`
-                      }
-                    >
-                      <MoreVerticalIcon />
-                    </button>
-
-
-                    {openMenuId === task.id && (
-
-                      <div className="task-menu">
-
-                        <button
-                          type="button"
-                          onClick={() => handleStartEdit(task)}
-                        >
-                          ✎ Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          className="task-menu-delete"
-                          onClick={() => handleDeleteTask(task.id)}
-                        >
-                          🗑 Delete
-                        </button>
-
-                      </div>
-
-                    )}
-
-                  </div>
-
+              {openMenuId === task.id && (
+                <div className="task-menu">
+                  <button type="button" onClick={() => openEditModal(task)}>✎ Edit</button>
+                  <button type="button" className="task-menu-delete"
+                    onClick={() => handleDeleteTask(task.id)}>🗑 Delete</button>
                 </div>
-
-              );
-            }
-          )
-
-        )}
-
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
+      {toastMessage && (
+        <div className="task-toast" role="status" aria-live="polite">
+          <span>{toastMessage}</span>
+          <button type="button" onClick={() => dispatch(clearToastAction())} aria-label="Dismiss notification">×</button>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="task-modal-backdrop" onMouseDown={handleModalBackdrop}>
+          <section className="task-modal" role="dialog" aria-modal="true"
+            aria-labelledby="task-modal-title">
+            <div className="task-modal-heading">
+              <div>
+                <p className="task-modal-eyebrow">FOCUS DASHBOARD</p>
+                <h3 id="task-modal-title">{editingTaskId !== null ? "Edit task" : "Add a task"}</h3>
+              </div>
+              <button type="button" className="task-modal-close" onClick={closeModal}
+                aria-label="Close task form">×</button>
+            </div>
+
+            <form onSubmit={handleSubmit} noValidate>
+              <TaskFormField id="task-title" label="Task title" error={formErrors.title}>
+                <input
+                  id="task-title"
+                  ref={titleInputRef}
+                  type="text"
+                  maxLength={100}
+                  value={form.title}
+                  onChange={(event) => {
+                    setForm((previous) => ({ ...previous, title: event.target.value }));
+                    if (formErrors.title) setFormErrors((previous) => ({ ...previous, title: "" }));
+                  }}
+                  placeholder="e.g. Revise Java collections"
+                  aria-invalid={Boolean(formErrors.title)}
+                  aria-describedby={formErrors.title ? "task-title-error" : undefined}
+                />
+              </TaskFormField>
+
+              <TaskFormField id="task-type" label="Category">
+                <select id="task-type" value={form.type}
+                  onChange={(event) => setForm((previous) => ({ ...previous, type: event.target.value }))}>
+                  {taskTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+                </select>
+              </TaskFormField>
+
+              <p className="task-form-hint">Use 3–100 characters. Duplicate task titles are not allowed.</p>
+
+              <div className="task-modal-actions">
+                <button type="button" className="task-modal-cancel" onClick={closeModal}>Cancel</button>
+                <button type="submit" className="task-modal-save">
+                  <CheckIcon /> {editingTaskId !== null ? "Save changes" : "Add task"}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
     </section>
   );
 }

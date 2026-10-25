@@ -7,9 +7,12 @@
 
 import {
   useCallback,
+  useContext,
   useEffect,
-  useMemo
+  useMemo,
+  useState
 } from "react";
+import { Provider } from "react-redux";
 
 import Topbar from "./components/layout/Topbar";
 
@@ -20,6 +23,8 @@ import RecentSessions from "./components/focus/RecentSessions";
 import ProductivityOverview from "./components/focus/ProductivityOverview";
 import FocusInsights from "./components/focus/FocusInsights";
 import QuickTools from "./components/focus/QuickTools";
+import FocusDashboardContext from "./components/focus/FocusDashboardContext";
+import { focusUiStore } from "./components/focus/focusUiStore";
 
 import { getDateString } from "./utils/dateHelpers";
 import {
@@ -33,19 +38,40 @@ import { recordTodayCompletion } from "./utils/taskHistory";
 import { sumSessionMinutes } from "./utils/sessionHelpers";
 
 import "./FocusPage.css";
+import "./FocusVisualPolish.css";
 
 // BEGINNER: FocusPage()
 // This component/function is responsible for the FocusPage part of this feature.
 // It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
 // FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function FocusPage({
-  tasks,
-  setTasks,
-  sessions,
-  setSessions,
-  demoMode,
-  demoDate
-}) {
+//
+// CHANGED (Context API + Redux Toolkit): FocusPage is now a thin wrapper.
+//  - <Provider store={focusUiStore}>  -> task search/filter/toast state (Redux Toolkit)
+//  - <FocusDashboardContext.Provider> -> shares tasks/sessions (owned by FocusApp) with child components
+// This replaces "prop drilling" (passing tasks/setTasks through every level).
+function FocusPage(props) {
+  return (
+    <Provider store={focusUiStore}>
+      <FocusDashboardContext.Provider value={props}>
+        <FocusDashboardContent />
+      </FocusDashboardContext.Provider>
+    </Provider>
+  );
+}
+
+// The real dashboard. It reads the props FocusApp gave FocusPage from context.
+function FocusDashboardContent() {
+  const {
+    tasks,
+    setTasks,
+    sessions,
+    setSessions,
+    demoMode,
+    demoDate
+  } = useContext(FocusDashboardContext);
+
+  // LOCAL state: the "session saved" toast only matters to this page.
+  const [toast, setToast] = useState("");
 
   /* =======================================================
      DATE
@@ -150,6 +176,22 @@ function FocusPage({
   ]);
 
   /* =======================================================
+     AUTO-DISMISS TOAST (the cleanup function clears the timer)
+  ======================================================= */
+
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToast("");
+    }, 3500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [toast]);
+
+  /* =======================================================
      TIMER SESSION COMPLETE
   ======================================================= */
 
@@ -226,6 +268,10 @@ function FocusPage({
             newSession,
             ...previousSessions
           ]
+        );
+
+        setToast(
+          `Focus session for “${newSession.task}” was saved.`
         );
       },
       [
@@ -348,26 +394,26 @@ function FocusPage({
               TASKS | TIMER | SESSIONS
           ================================================= */}
 
-          <section className="focus-main-grid">
-            {/* Semantic section that groups related content into one feature area. — FEE topics: JSX + semantic HTML; className connects this structure to the CSS styling. */}
-            <TodayTasks
-              tasks={tasks}
-              setTasks={setTasks}
-            />
+          {/* CHANGED: these three cards now read their data from context, so no props are passed. */}
+          <FocusDashboardContext.Provider
+            value={{
+              tasks,
+              setTasks,
+              sessions,
+              setSessions,
+              todaySessions,
+              onSessionComplete: handleSessionComplete
+            }}
+          >
+            <section className="focus-main-grid">
+              {/* Semantic section that groups related content into one feature area. — FEE topics: JSX + semantic HTML; className connects this structure to the CSS styling. */}
+              <TodayTasks />
 
-            <FocusTimer
-              tasks={tasks}
-              onSessionComplete={
-                handleSessionComplete
-              }
-            />
+              <FocusTimer />
 
-            <RecentSessions
-              sessions={
-                todaySessions
-              }
-            />
-          </section>
+              <RecentSessions />
+            </section>
+          </FocusDashboardContext.Provider>
 
           {/* =================================================
               BOTTOM ROW
@@ -401,6 +447,49 @@ function FocusPage({
         </main>
 
       </div>
+
+      {/* Accessible toast for saved focus sessions (role="status" + aria-live) */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            right: "24px",
+            bottom: "24px",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            maxWidth: "calc(100vw - 32px)",
+            padding: "14px 16px",
+            borderRadius: "12px",
+            background: "#10234d",
+            color: "#ffffff",
+            boxShadow: "0 12px 32px rgba(15, 23, 42, 0.22)",
+            fontSize: "14px",
+            fontWeight: 600
+          }}
+        >
+          <span>{toast}</span>
+          <button
+            type="button"
+            onClick={() => setToast("")}
+            aria-label="Dismiss notification"
+            style={{
+              border: 0,
+              background: "transparent",
+              color: "inherit",
+              cursor: "pointer",
+              fontSize: "20px",
+              lineHeight: 1,
+              padding: "0 2px"
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
     </div>
   );

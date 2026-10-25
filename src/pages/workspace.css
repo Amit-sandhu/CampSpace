@@ -1039,6 +1039,23 @@ html,body{margin:0;padding:0;}
 .mainpage-code-terminal-output .mainpage-term-error{ color:#FF7B72; }
 .mainpage-code-terminal-output .mainpage-term-info{ color:#7D8590; }
 
+/* Code editor: saved-snippets toolbar, backend status, and stdin box */
+.mainpage-code-toolbar{
+  flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:6px 10px;
+  border-bottom:1px solid var(--mainpage-border); background:rgba(0,0,0,.02);
+}
+.mainpage-code-toolbar .mainpage-code-lang-select{ max-width:190px; min-width:0; }
+.mainpage-code-status{ font-size:11px; color:var(--mainpage-text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mainpage-code-backend{ margin-left:auto; font-size:10.5px; font-weight:600; white-space:nowrap; color:var(--mainpage-text-secondary); }
+.mainpage-code-backend--online{ color:#2E9E5B; }
+.mainpage-code-backend--offline{ color:#D1453B; }
+.mainpage-code-stdin{
+  flex:0 0 auto; resize:vertical; max-height:90px; margin:0; padding:6px 14px; border:none; outline:none;
+  border-bottom:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.03); color:#C9D1D9;
+  font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; font-size:12px;
+}
+.mainpage-body--dark .mainpage-code-toolbar{ background:rgba(255,255,255,.03); }
+
 /* -------------------- AI Chatbot window -------------------- */
 .mainpage-aichat-body{ padding:0; display:flex; flex-direction:column; height:420px; min-height:0; }
 .mainpage-window--maximized .mainpage-aichat-body{ height:auto !important; flex:1 1 auto; }

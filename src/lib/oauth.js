@@ -60,6 +60,12 @@ export function runOAuthScript() {
   // It receives data/props, performs the required work, and returns the result or UI.
   // Keeping this job in one function makes the code easier to follow during the PPT.
   function showMessage(text, isError) {
+    // The React login page owns the message area; hand the text to it.
+    if (window.CampSpaceLoginMessage) {
+      window.CampSpaceLoginMessage(text, isError);
+      return;
+    }
+
     var messageEl = document.getElementById('login-message');
 
     if (!messageEl) {

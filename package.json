@@ -6,15 +6,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "server:dev": "node --watch server/index.js",
+    "dev:all": "concurrently -k -n web,api -c cyan,green \"npm run dev\" \"npm run server\""
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.13.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^4.22.3",
+    "mysql2": "^3.24.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.18.3"
+    "react-redux": "^9.3.0",
+    "react-router-dom": "^7.18.3",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^10.0.6",
     "vite": "^7.1.5"
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import { useEffect } from 'react';
+import { Provider } from 'react-redux';
 import {
   BrowserRouter,
   Navigate,
@@ -22,6 +23,8 @@ import FocusApp from './apps/focus/FocusApp.jsx';
 import CamiAI from './apps/cami/CamiAI.jsx';
 import FeeSyllabusPage, { SyllabusTopic } from './fee-syllabus/FeeSyllabusPage.jsx';
 import Sidebar, { getLastRoute, rememberRoute } from './apps/sidebar/Sidebar.jsx';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { chatStore } from './store/chatStore.js';
 
 const WORKSPACE_ROUTES = ['/dashboard', '/focus', '/cami'];
 
@@ -39,6 +42,9 @@ function hasSession() {
 
 function getInitialPath() {
   const params = new URLSearchParams(window.location.search);
+  // FIX: the GitHub OAuth redirect comes back as /?page=github-callback&code=...&state=...
+  // Redirecting to a bare '/login' threw the code/state away, so keep the query string.
+  if (params.get('page') === 'github-callback') return '/login' + window.location.search;
   if (params.get('page') === 'login') return '/login';
   if (params.get('page') === 'workspace') return getLastRoute();
   if (WORKSPACE_ROUTES.includes(window.location.pathname)) return window.location.pathname;
@@ -95,7 +101,10 @@ function WorkspaceLayout() {
 // It connects the current route/layout with the child React components shown to the user.
 // FEE topics: React components, JSX, routing, and component composition.
 function ProtectedWorkspace() {
-  if (!hasSession()) {
+  // CONTEXT API: read "is someone signed in?" from AuthContext instead of
+  // re-reading localStorage inside every component that needs it.
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
   return <WorkspaceLayout />;
@@ -132,7 +141,17 @@ function RouterApp() {
 // BEGINNER: App()
 // This is the React entry component for the application or router.
 // It decides which page/component React should render for the current route.
-// FEE topics: React components, JSX, React Router, and component composition.
+// FEE topics: React components, JSX, React Router, Context API, Redux Toolkit provider, and component composition.
 export default function App() {
-  return <RouterApp />;
+  // Two global providers wrap the whole app:
+  //   AuthProvider -> Context API: signed-in user + logout (src/context/AuthContext.jsx)
+  //   Provider     -> Redux Toolkit: shared chat store used by Cami AI and the AI Chat window
+  // (The Focus page keeps its own separate store and context.)
+  return (
+    <AuthProvider>
+      <Provider store={chatStore}>
+        <RouterApp />
+      </Provider>
+    </AuthProvider>
+  );
 }

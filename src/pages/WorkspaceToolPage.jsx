@@ -14,7 +14,7 @@
  */
 
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import WorkspacePage from './WorkspacePage.jsx';
 
 const WORKSPACE_TOOL_MAP = {
@@ -41,6 +41,12 @@ export default function WorkspaceToolPage() {
 
     return () => window.clearTimeout(timer);
   }, [tool]);
+
+  // FIX: /workspace/<unknown> used to render the dashboard on a bogus URL.
+  // Only notes / calendar / code are valid tools; anything else goes to /dashboard.
+  if (!WORKSPACE_TOOL_MAP[tool]) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return <WorkspacePage />;
 }

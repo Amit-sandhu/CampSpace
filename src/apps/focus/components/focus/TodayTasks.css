@@ -190,9 +190,11 @@
 
 .task-name {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
   color: #1e3157;
   font-size: 13px;
   line-height: 1.25;
@@ -417,5 +419,236 @@
 
   .task-row-editing {
     grid-template-columns: 1fr;
+  }
+}
+
+/* NEW: search/sort toolbar, validated modal form, reusable field and toast styles */
+.task-toolbar {
+  display: grid;
+  /* The task card is 390px wide on desktop; use shrinkable tracks so the
+     sort dropdown remains inside the card after its horizontal padding. */
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1.03fr) minmax(0, 1fr);
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 11px;
+}
+
+.task-search,
+.task-control {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.task-search input,
+.task-control select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 35px;
+  padding: 0 6px;
+  border: 1px solid #dce6f2;
+  border-radius: 8px;
+  background: rgba(255,255,255,.95);
+  color: #304665;
+  font-size: 11px;
+  outline: none;
+}
+
+.task-search input:focus,
+.task-control select:focus,
+.task-field input:focus,
+.task-field select:focus {
+  border-color: #70a6ff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.09);
+}
+
+.task-field input[aria-invalid="true"] {
+  border-color: #dc5454;
+}
+
+.task-field input,
+.task-field select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #dce6f2;
+  border-radius: 9px;
+  background: #fff;
+  color: #1e3157;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.task-field {
+  display: grid;
+  gap: 7px;
+  margin: 16px 0;
+}
+
+.task-field label {
+  color: #304665;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.task-field-error {
+  margin: 0;
+  color: #c53030;
+  font-size: 11px;
+}
+
+.task-form-hint {
+  margin: 8px 0 0;
+  color: #71829d;
+  font-size: 11px;
+}
+
+.task-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(14, 27, 59, .38);
+  backdrop-filter: blur(5px);
+}
+
+.task-modal {
+  width: min(100%, 440px);
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 35, 78, .24);
+  animation: taskModalIn .18s ease-out;
+}
+
+@keyframes taskModalIn {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.task-modal-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.task-modal-eyebrow {
+  margin: 0 0 6px;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.task-modal-heading h3 {
+  margin: 0;
+  color: #10194d;
+  font-size: 23px;
+  letter-spacing: -.5px;
+}
+
+.task-modal-close {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 9px;
+  background: #f2f6fc;
+  color: #526783;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.task-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.task-modal-cancel,
+.task-modal-save {
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.task-modal-cancel {
+  border: 1px solid #dce6f2;
+  background: white;
+  color: #536b91;
+}
+
+.task-modal-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  background: linear-gradient(135deg,#2563eb,#1593ff);
+  color: white;
+}
+
+.task-modal-save svg {
+  width: 14px;
+  height: 14px;
+}
+
+.task-toast {
+  position: sticky;
+  bottom: 8px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #10234d;
+  color: white;
+  box-shadow: 0 10px 24px rgba(15, 35, 78, .2);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.task-toast button {
+  padding: 0 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .task-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .task-search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .task-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .task-search {
+    grid-column: auto;
+  }
+  .task-modal {
+    padding: 19px;
   }
 }

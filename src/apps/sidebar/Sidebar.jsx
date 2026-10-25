@@ -7,6 +7,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './Sidebar.css';
 
 export const SIDEBAR_ITEMS = [
@@ -37,6 +38,9 @@ export function getLastRoute() {
 // It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
 // FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
 export default function Sidebar() {
+  // CONTEXT API: the signed-in user and logout come from AuthContext (global state).
+  // `open` below is LOCAL state because only the sidebar itself needs it.
+  const { user, logout: signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -69,11 +73,7 @@ export default function Sidebar() {
   // It receives data/props, performs the required work, and returns the result or UI.
   // Keeping this job in one function makes the code easier to follow during the PPT.
   function logout() {
-    if (window.CampSpaceAuth?.clearSession) {
-      window.CampSpaceAuth.clearSession();
-    } else {
-      localStorage.removeItem('campspace_session');
-    }
+    signOut();
     localStorage.removeItem(LAST_ROUTE_KEY);
     window.location.href = '/?page=login';
   }
@@ -121,7 +121,10 @@ export default function Sidebar() {
         <nav className="campspace-sidebar-nav" aria-label="CampSpace navigation">
           {/* Navigation area containing links or controls for moving around the app. — FEE topics: JSX + semantic HTML; className connects this structure to the CSS styling. */}
           {SIDEBAR_ITEMS.map((item) => {
-            const active = location.pathname === item.path;
+            // FIX: /workspace/notes|calendar|code are dashboard tool windows, so keep Dashboard highlighted.
+            const active =
+              location.pathname === item.path ||
+              (item.path === '/dashboard' && location.pathname.startsWith('/workspace/'));
             return (
               <button
                 key={item.id}
@@ -139,6 +142,13 @@ export default function Sidebar() {
 
         {/* Sidebar navigation used to move between campspace applications. — FEE topics: JSX + semantic HTML; className connects this structure to the CSS styling. */}
         <div className="campspace-sidebar-spacer" />
+
+        {user && (
+          <div className="campspace-sidebar-user" title={user.email}>
+            <span className="campspace-sidebar-user-name">{user.name || 'Signed in'}</span>
+            <span className="campspace-sidebar-user-email">{user.email}</span>
+          </div>
+        )}
 
         <button
           type="button"

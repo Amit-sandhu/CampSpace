@@ -1929,7 +1929,9 @@ function runMainPageScript() {
     });
   }
 
-  codeEditorApp();
+  // The Code Editor is now a React component (src/apps/code-editor/CodeEditorApp.jsx) that talks to the
+  // backend. Running this older DOM-based version too made the two fight over the same elements and crash.
+  // codeEditorApp();
 
   /* ---------------------------------------------------------
      AI Chatbot app

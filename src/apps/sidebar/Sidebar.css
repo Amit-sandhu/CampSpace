@@ -161,3 +161,16 @@
   .campspace-sidebar-menu-button { top: 12px; left: 12px; }
   .campspace-sidebar { top: 10px; left: 10px; bottom: 10px; width: min(238px, calc(100vw - 20px)); }
 }
+
+/* Signed-in user (read from AuthContext) shown above Logout. */
+.campspace-sidebar-user {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.campspace-sidebar-user-name { color: #f8fafc; font-size: 13px; font-weight: 600; text-overflow: ellipsis; overflow: hidden; }
+.campspace-sidebar-user-email { color: #94a3b8; font-size: 12px; text-overflow: ellipsis; overflow: hidden; }

@@ -1,12 +1,15 @@
 /*
- * BEGINNER GUIDE: src/apps/focus/components/focus/FocusTimer.jsx
- * This React file defines the FocusTimer component(s) and their visible UI.
- * Read the JSX below as HTML-like structure; JavaScript above/below it supplies the behaviour.
- * Syllabus topics are marked near the code that actually demonstrates them.
+ * CHANGED in this file (what + why):
+ *  - CONTEXT: tasks + onSessionComplete come from FocusDashboardContext instead of props
+ *  - BUG FIX: the old timer called onSessionComplete from inside a setState updater.
+ *    React may run updaters twice (StrictMode), which could save one session twice.
+ *    Now a 1-second setTimeout counts down and a ref (completionHandledRef) makes
+ *    sure the finished session is saved exactly once.
  */
-
 import {
+  useContext,
   useEffect,
+  useRef,
   useState
 } from "react";
 
@@ -17,377 +20,157 @@ import {
   RefreshIcon
 } from "../common/Icons";
 
+import FocusDashboardContext from "./FocusDashboardContext";
+
 import "./FocusTimer.css";
 
+const POMODORO_SECONDS = 25 * 60;
 
-const POMODORO_SECONDS =
-  25 * 60;
+function FocusTimer() {
+  const { tasks, onSessionComplete } =
+    useContext(FocusDashboardContext);
 
+  const [mode, setMode] = useState("pomodoro");
+  const [customMinutes, setCustomMinutes] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(POMODORO_SECONDS);
+  const [isRunning, setIsRunning] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState("");
 
-// BEGINNER: FocusTimer()
-// This component/function is responsible for the FocusTimer part of this feature.
-// It keeps that task in one place so the surrounding JSX and state logic are easier to understand.
-// FEE topics: JavaScript functions, React components/JSX, and the feature-specific concepts used below.
-function FocusTimer({
-  tasks,
-  onSessionComplete
-}) {
-
-  const [mode, setMode] =
-    useState("pomodoro");
-
-  const [customMinutes, setCustomMinutes] =
-    useState(60);
-
-  const [timeLeft, setTimeLeft] =
-    useState(
-      POMODORO_SECONDS
-    );
-
-  const [isRunning, setIsRunning] =
-    useState(false);
-
-  const [selectedTaskId, setSelectedTaskId] =
-    useState("");
-
+  // Prevent the same timer completion from being saved twice.
+  const completionHandledRef = useRef(false);
 
   const totalTime =
     mode === "pomodoro"
       ? POMODORO_SECONDS
       : customMinutes * 60;
 
-
-  /* =====================================================
-     LOCKED
-     -------------------------------------------------
-     True from the moment Start is clicked until the
-     session either finishes or is reset — covers BOTH
-     "actively running" and "paused mid-session", so the
-     task/minutes can't be swapped out from under an
-     in-progress session. (timeLeft === totalTime means
-     "not started yet"; timeLeft === 0 means "just
-     finished" — neither of those counts as in-progress.)
-  ===================================================== */
-
   const isLocked =
     isRunning ||
-    (
-      timeLeft > 0 &&
-      timeLeft < totalTime
-    );
+    (timeLeft > 0 && timeLeft < totalTime);
 
-
-  /* =====================================================
-     TIMER EFFECT
-  ===================================================== */
-
+  // Timer countdown and one-time session completion.
   useEffect(() => {
-
     if (!isRunning) {
-      return;
+      return undefined;
     }
 
+    const timeoutId = window.setTimeout(() => {
+      if (timeLeft <= 1) {
+        setTimeLeft(0);
+        setIsRunning(false);
 
-    const intervalId =
-      setInterval(() => {
+        if (completionHandledRef.current) {
+          return;
+        }
 
-        setTimeLeft(
-          (previousTime) => {
+        completionHandledRef.current = true;
 
-            if (
-              previousTime <= 1
-            ) {
-
-              clearInterval(
-                intervalId
-              );
-
-
-              const selectedTask =
-                tasks.find(
-                  (task) =>
-                    task.id ===
-                    Number(
-                      selectedTaskId
-                    )
-                );
-
-
-              if (selectedTask) {
-
-                onSessionComplete({
-
-                  taskId:
-                    selectedTask.id,
-
-                  task:
-                    selectedTask.title,
-
-                  type:
-                    selectedTask.type,
-
-                  duration:
-                    Math.ceil(
-                      totalTime / 60
-                    )
-
-                });
-
-              }
-
-
-              setIsRunning(false);
-
-              return 0;
-            }
-
-
-            return previousTime - 1;
-          }
+        const selectedTask = tasks.find(
+          (task) => task.id === Number(selectedTaskId)
         );
 
-      }, 1000);
+        if (selectedTask) {
+          onSessionComplete({
+            taskId: selectedTask.id,
+            task: selectedTask.title,
+            type: selectedTask.type,
+            duration: Math.ceil(totalTime / 60)
+          });
+        }
 
+        return;
+      }
 
-    return () =>
-      clearInterval(
-        intervalId
-      );
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
 
+    return () => window.clearTimeout(timeoutId);
   }, [
     isRunning,
+    timeLeft,
     tasks,
     selectedTaskId,
     totalTime,
     onSessionComplete
   ]);
 
-
-  /* =====================================================
-     START
-  ===================================================== */
-
-  // BEGINNER: startTimer()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
   function startTimer() {
-
-    if (
-      selectedTaskId === ""
-    ) {
-
-      alert(
-        "Please select a task first."
-      );
-
+    if (selectedTaskId === "") {
+      alert("Please select a task first.");
       return;
     }
 
+    completionHandledRef.current = false;
 
-    if (
-      timeLeft === 0
-    ) {
-
-      setTimeLeft(
-        totalTime
-      );
-
+    if (timeLeft === 0) {
+      setTimeLeft(totalTime);
     }
-
 
     setIsRunning(true);
   }
 
-
-  /* =====================================================
-     PAUSE
-  ===================================================== */
-
-  // BEGINNER: pauseTimer()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
   function pauseTimer() {
     setIsRunning(false);
   }
 
-
-  /* =====================================================
-     RESET
-  ===================================================== */
-
   function resetTimer() {
-
     setIsRunning(false);
-
-    setTimeLeft(
-      totalTime
-    );
+    completionHandledRef.current = false;
+    setTimeLeft(totalTime);
   }
 
-
-  /* =====================================================
-     POMODORO
-  ===================================================== */
-
-  // BEGINNER: choosePomodoro()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
   function choosePomodoro() {
-
     setIsRunning(false);
-
+    completionHandledRef.current = false;
     setMode("pomodoro");
-
-    setTimeLeft(
-      POMODORO_SECONDS
-    );
+    setTimeLeft(POMODORO_SECONDS);
   }
 
-
-  /* =====================================================
-     CUSTOM
-  ===================================================== */
-
-  // BEGINNER: chooseCustom()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
   function chooseCustom() {
-
     setIsRunning(false);
-
+    completionHandledRef.current = false;
     setMode("custom");
-
-    setTimeLeft(
-      customMinutes * 60
-    );
+    setTimeLeft(customMinutes * 60);
   }
 
-
-  /* =====================================================
-     CUSTOM MINUTES
-  ===================================================== */
-
-  // BEGINNER: changeMinutes()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
   function changeMinutes(event) {
+    const value = Number(event.target.value);
+    // Keep custom sessions within the range exposed by the input.
+    const minutes = Math.min(180, Math.max(1, Math.floor(value || 1)));
 
-    const value =
-      Number(
-        event.target.value
-      );
+    setCustomMinutes(minutes);
 
-
-    const minutes =
-      value > 0
-        ? value
-        : 1;
-
-
-    setCustomMinutes(
-      minutes
-    );
-
-
-    if (
-      !isRunning &&
-      mode === "custom"
-    ) {
-
-      setTimeLeft(
-        minutes * 60
-      );
+    if (!isRunning && mode === "custom") {
+      setTimeLeft(minutes * 60);
     }
   }
 
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
 
-  /* =====================================================
-     FORMAT
-  ===================================================== */
-
-  // BEGINNER: formatTime()
-  // Main job: perform one focused task for this file.
-  // It receives data/props, performs the required work, and returns the result or UI.
-  // Keeping this job in one function makes the code easier to follow during the PPT.
-  function formatTime(
-    seconds
-  ) {
-
-    const minutes =
-      Math.floor(
-        seconds / 60
-      );
-
-
-    const remainingSeconds =
-      seconds % 60;
-
-
-    return (
-      `${String(
-        minutes
-      ).padStart(
-        2,
-        "0"
-      )}:${String(
-        remainingSeconds
-      ).padStart(
-        2,
-        "0"
-      )}`
-    );
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
   }
-
 
   const progress =
     totalTime === 0
       ? 0
-      :
-      (
-        (
-          totalTime -
-          timeLeft
-        ) /
-        totalTime
-      ) * 100;
-
+      : ((totalTime - timeLeft) / totalTime) * 100;
 
   return (
     <section className="timer-card">
-      {/* Semantic section that groups related content into one feature area. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-
-      {/* HEADER */}
-
       <div className="timer-header">
-        {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         <div className="timer-title">
-          {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
           <span>
             <ClockIcon />
           </span>
-
-          <h2>
-            Focus Timer
-          </h2>
-
+          <h2>Focus Timer</h2>
         </div>
-
       </div>
 
-
-      {/* TABS */}
-
       <div className="timer-tabs">
-        {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         <button
           type="button"
           className={
@@ -395,13 +178,12 @@ function FocusTimer({
               ? "timer-tab active"
               : "timer-tab"
           }
-          onClick={
-            choosePomodoro
-          }
+          onClick={choosePomodoro}
+          disabled={isLocked}
+          aria-pressed={mode === "pomodoro"}
         >
           Pomodoro
         </button>
-
 
         <button
           type="button"
@@ -410,150 +192,80 @@ function FocusTimer({
               ? "timer-tab active"
               : "timer-tab"
           }
-          onClick={
-            chooseCustom
-          }
+          onClick={chooseCustom}
+          disabled={isLocked}
+          aria-pressed={mode === "custom"}
         >
           Timer (Custom)
         </button>
-
       </div>
 
-
-      {/* CUSTOM TIME */}
-
       {mode === "custom" && (
-
         <div className="custom-time">
-
-          <label>
-            Minutes
-          </label>
+          <label>Minutes</label>
 
           <input
             type="number"
             min="1"
             max="180"
-            value={
-              customMinutes
-            }
-            onChange={
-              changeMinutes
-            }
-            disabled={
-              isLocked
-            }
+            step="1"
+            value={customMinutes}
+            onChange={changeMinutes}
+            disabled={isLocked}
           />
-
         </div>
-
       )}
 
-
-      {/* SELECT TASK */}
-
       <div className="timer-select">
-        {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-        <label>
-          Select Task
-        </label>
+        <label>Select Task</label>
 
         <select
-          value={
-            selectedTaskId
-          }
+          value={selectedTaskId}
           onChange={(event) =>
-            setSelectedTaskId(
-              event.target.value
-            )
+            setSelectedTaskId(event.target.value)
           }
-          disabled={
-            isLocked
-          }
+          disabled={isLocked}
         >
+          <option value="">Select a task</option>
 
-          <option value="">
-            Select a task
-          </option>
-
-
-          {tasks.map(
-            (task) => (
-
-              <option
-                key={task.id}
-                value={task.id}
-              >
-                {task.title} — {task.type}
-              </option>
-
-            )
-          )}
-
+          {tasks.map((task) => (
+            <option key={task.id} value={task.id}>
+              {task.title} — {task.type}
+            </option>
+          ))}
         </select>
-
       </div>
 
-
-      {/* CIRCLE */}
-
       <div className="timer-circle-area">
-        {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         <div
           className="timer-circle"
           style={{
-            background:
-              `conic-gradient(
-                #2563eb ${progress}%,
-                #dce7f5 ${progress}% 100%
-              )`
+            background: `conic-gradient(
+              #2563eb ${progress}%,
+              #dce7f5 ${progress}% 100%
+            )`
           }}
         >
-
           <div className="timer-circle-inner">
-            {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
-            <strong>
-              {formatTime(
-                timeLeft
-              )}
-            </strong>
+            <strong>{formatTime(timeLeft)}</strong>
 
             <span>
-
               {isRunning
                 ? "Focusing..."
                 : timeLeft === 0
                   ? "Session complete"
-                  : "Ready to focus"
-              }
-
+                  : "Ready to focus"}
             </span>
-
           </div>
-
         </div>
-
       </div>
 
-
-      {/* CONTROLS */}
-
       <div className="timer-controls">
-        {/* Focus timer interface with duration selection and timer controls. — FEE topics: JSX + semantic HTML + event handling; className connects this structure to the CSS styling. */}
-
         <button
           type="button"
           className="timer-start"
-          onClick={
-            isRunning
-              ? pauseTimer
-              : startTimer
-          }
+          onClick={isRunning ? pauseTimer : startTimer}
         >
-
           {isRunning ? (
             <>
               <PauseIcon />
@@ -565,23 +277,17 @@ function FocusTimer({
               <span>Start</span>
             </>
           )}
-
         </button>
-
 
         <button
           type="button"
           className="timer-reset"
-          onClick={
-            resetTimer
-          }
+          onClick={resetTimer}
           aria-label="Reset timer"
         >
           <RefreshIcon />
         </button>
-
       </div>
-
     </section>
   );
 }
